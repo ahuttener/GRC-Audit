@@ -1,4 +1,8 @@
+<img src="public/banner.jpg" alt="GRC Audit — Governance, Risk and Compliance" width="100%" />
+
 # GRC Audit — Incident → Framework Diagnostic & Remediation
+
+**▶ Live:** [cybersecinfo.com/grcaudit](https://cybersecinfo.com/grcaudit/) · mirror on [GitHub Pages](https://ahuttener.github.io/GRC-Audit/)
 
 **Describe a security incident in plain language. Get an auditor-grade, framework-mapped
 diagnosis — with control IDs verified against official catalogs, not hallucinated.**

@@ -30,7 +30,7 @@ const PILLARS = [
 export default function RiskTreatmentCard() {
   return (
     <section className="rounded-2xl border border-line bg-panel2/50 p-5">
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+      <h2 className="font-display text-sm font-bold uppercase tracking-[0.12em] text-accent">
         Core Principle: The Pillars of Risk Treatment{" "}
         <span className="normal-case text-slate-500">(ISO 31000 &amp; NIST)</span>
       </h2>

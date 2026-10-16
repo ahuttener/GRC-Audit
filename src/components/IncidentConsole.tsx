@@ -65,7 +65,7 @@ export default function IncidentConsole({ value, onChange, onPick, onSubmit, loa
           type="button"
           onClick={onSubmit}
           disabled={loading || tooShort}
-          className="inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-ink transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex items-center gap-2 rounded-full bg-accent-strong px-6 py-2.5 text-sm font-bold text-gray-900 transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
         >
           {loading ? (
             <>

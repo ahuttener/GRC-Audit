@@ -17,7 +17,7 @@ mkdir -p dist-hostinger/grcaudit/api/frameworks
 cp -r out/. dist-hostinger/grcaudit/
 cp hosting/.htaccess dist-hostinger/grcaudit/.htaccess
 sed -i "s#/grcaudit/404.html#${BASE}/404.html#" dist-hostinger/grcaudit/.htaccess
-cp hosting/COMO-INSTALAR.txt dist-hostinger/grcaudit/
+cp hosting/COMO-INSTALAR.txt dist-hostinger/  # install notes stay OUT of the public web folder
 cp php/audit-incident.php php/grcaudit-config.sample.php dist-hostinger/grcaudit/api/
 cp src/data/audit-schema.json dist-hostinger/grcaudit/api/
 cp src/data/frameworks/*.json dist-hostinger/grcaudit/api/frameworks/

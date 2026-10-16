@@ -7,6 +7,8 @@ const basePath = process.env.BASE_PATH ?? "/grcaudit";
 
 const nextConfig = {
   reactStrictMode: true,
+  // Lets plain <img> tags reference files in /public under the same sub-path.
+  env: { NEXT_PUBLIC_BASE_PATH: isExport ? basePath : "" },
   ...(isExport
     ? {
         output: "export",

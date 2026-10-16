@@ -17,7 +17,7 @@ function build(gf: GroundedFrameworks): Card[] {
       id: gf.nist_csf_2.subcategories, name: gf.nist_csf_2.function_name, body: "",
     },
     {
-      label: "ISO/IEC 27001:2022", jurisdiction: "International", accent: "text-teal-300 border-teal-400/30",
+      label: "ISO/IEC 27001:2022", jurisdiction: "International", accent: "text-cyan-300 border-cyan-400/30",
       id: gf.iso_27001_2022.control_id, name: gf.iso_27001_2022.control_name,
       body: gf.iso_27001_2022.audit_finding, sub: gf.iso_27001_2022.category,
     },

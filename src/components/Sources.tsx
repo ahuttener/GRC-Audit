@@ -50,7 +50,7 @@ const DOWNLOAD: Record<string, { free: boolean; url: string; label: string }> = 
 export default function Sources() {
   return (
     <section className="rounded-2xl border border-line bg-panel2/50 p-5">
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Official sources</h2>
+      <h2 className="font-display text-sm font-bold uppercase tracking-[0.12em] text-accent">Official sources</h2>
       <p className="mt-1 text-xs text-slate-500">
         Every control ID this tool cites is drawn from, and verified against, the official source for
         each framework. Paid/copyrighted standards (ISO/IEC 27001, SOC 2) are referenced by official

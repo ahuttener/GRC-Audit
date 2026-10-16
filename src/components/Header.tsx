@@ -1,47 +1,68 @@
 "use client";
 
-import { useState } from "react";
-import { ShieldCheck } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { FileText, Github, ShieldCheck, type LucideIcon } from "lucide-react";
 
-const TAGS = ["NIST CSF 2.0", "ISO 27001", "SOC 2", "GDPR", "CCPA/CPRA", "HIPAA"];
+// Same top bar as cybersecinfo.com, so GRC Audit reads as part of the site.
+// Absolute URLs keep every link working on both cybersecinfo.com/grcaudit and GitHub Pages.
+const HOME = "https://cybersecinfo.com/";
+const NAV: { label: string; href: string; icon?: LucideIcon; active?: boolean }[] = [
+  { label: "GitHub", href: "https://github.com/ahuttener", icon: Github },
+  { label: "GRC Audit", href: `${HOME}grcaudit/`, icon: ShieldCheck, active: true },
+  { label: "Editor PDF", href: `${HOME}editor-pdf/`, icon: FileText },
+  { label: "Topics", href: `${HOME}#threats` },
+  { label: "Protection", href: `${HOME}#protection` },
+  { label: "AI Analyzer", href: `${HOME}#analyzer` },
+  { label: "AI Chat", href: `${HOME}#chatbot` },
+  { label: "Quiz", href: `${HOME}#quiz` },
+];
 
 export default function Header() {
   const [logoFailed, setLogoFailed] = useState(false);
+  const logoRef = useRef<HTMLImageElement>(null);
+  // On a static page the image can fail before React hydrates (onError never fires) — check once.
+  useEffect(() => {
+    const img = logoRef.current;
+    if (img && img.complete && img.naturalWidth === 0) setLogoFailed(true);
+  }, []);
   return (
-    <header className="border-b border-line bg-panel2/60 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-accent/10 ring-1 ring-accent/30">
-            {logoFailed ? (
-              <ShieldCheck className="h-6 w-6 text-accent" />
-            ) : (
-              // Loads the live CyberSecInfo logo; falls back to a shield if offline.
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src="https://cybersecinfo.com/img/logo.png"
-                alt="CyberSecInfo"
-                className="h-9 w-9 object-contain"
-                onError={() => setLogoFailed(true)}
-              />
-            )}
-          </div>
-          <div className="leading-tight">
-            <div className="text-lg font-bold tracking-tight">
-              GRC <span className="text-accent">Audit</span>
-            </div>
-            <div className="text-xs text-slate-400">by CyberSecInfo</div>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {TAGS.map((t) => (
-            <span
-              key={t}
-              className="rounded-full border border-line bg-panel px-3 py-1 text-xs font-medium text-slate-300"
-            >
-              {t}
+    <header className="sticky top-0 z-50 border-b border-line/70 bg-ink/90 backdrop-blur-sm">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-2.5">
+        <a href={HOME} className="flex shrink-0 items-center" aria-label="CyberSecInfo — home">
+          {logoFailed ? (
+            <span className="font-display text-lg font-bold tracking-wide text-white">
+              Cyber<span className="text-accent">SecInfo</span>
             </span>
-          ))}
-        </div>
+          ) : (
+            // The live CyberSecInfo wordmark; falls back to text if it can't load.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              ref={logoRef}
+              src={`${HOME}img/logo.png`}
+              alt="CyberSecInfo — Information Security"
+              className="h-10 w-auto"
+              onError={() => setLogoFailed(true)}
+            />
+          )}
+        </a>
+        <nav aria-label="CyberSecInfo" className="no-scrollbar -mx-2 w-full overflow-x-auto lg:mx-0 lg:w-auto">
+          <ul className="flex items-center gap-0.5 whitespace-nowrap">
+            {NAV.map(({ label, href, icon: Icon, active }) => (
+              <li key={label}>
+                <a
+                  href={href}
+                  aria-current={active ? "page" : undefined}
+                  className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-2 text-[13px] font-medium uppercase tracking-[0.05em] transition-colors hover:text-accent ${
+                    active ? "text-accent" : "text-white"
+                  }`}
+                >
+                  {Icon ? <Icon className="h-3.5 w-3.5" aria-hidden="true" /> : null}
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </header>
   );

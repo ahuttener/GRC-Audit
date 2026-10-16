@@ -75,7 +75,7 @@ export default function ResultView({ resp }: { resp: AuditResponse }) {
 
       {/* Framework matrix */}
       <section>
-        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+        <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-[0.12em] text-accent">
           Identify &amp; Assess · Grounded framework matrix
         </h3>
         <FrameworkMatrix gf={r.grounded_frameworks} />

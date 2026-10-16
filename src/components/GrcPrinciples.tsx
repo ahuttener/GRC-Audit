@@ -11,7 +11,7 @@ const PRINCIPLES = [
 export default function GrcPrinciples() {
   return (
     <section className="rounded-2xl border border-line bg-panel2/50 p-5">
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+      <h2 className="font-display text-sm font-bold uppercase tracking-[0.12em] text-accent">
         Built on the GRC lifecycle
       </h2>
       <p className="mt-1 text-xs text-slate-500">
