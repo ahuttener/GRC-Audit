@@ -8,6 +8,12 @@ import ResultView from "@/components/ResultView";
 import GrcPrinciples from "@/components/GrcPrinciples";
 import RiskTreatmentCard from "@/components/RiskTreatmentCard";
 import type { AuditResponse } from "@/types/grc";
+import { analyzeLocally } from "@/lib/analyzer";
+import { verify } from "@/lib/grounding";
+
+// Static builds run the grounded demo engine in the browser (no backend needed).
+// Set NEXT_PUBLIC_USE_API=1 on a Node/Vercel deploy to use the LLM API route instead.
+const USE_API = process.env.NEXT_PUBLIC_USE_API === "1";
 
 export default function Page() {
   const [incident, setIncident] = useState("");
@@ -30,20 +36,27 @@ export default function Page() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/audit-incident", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ incident, archetype }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Something went wrong.");
-        setResp(null);
+      if (USE_API) {
+        const res = await fetch("/api/audit-incident", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ incident, archetype }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.error || "Something went wrong.");
+          setResp(null);
+        } else {
+          setResp(data);
+        }
       } else {
-        setResp(data);
+        // Client-side grounded demo engine — runs on static hosting, no key, no cost.
+        const result = analyzeLocally(incident, archetype);
+        const verification = verify(result);
+        setResp({ source: "demo", verification, result });
       }
     } catch {
-      setError("Network error. Please try again.");
+      setError("Something went wrong analyzing the incident. Please try again.");
     } finally {
       setLoading(false);
     }
