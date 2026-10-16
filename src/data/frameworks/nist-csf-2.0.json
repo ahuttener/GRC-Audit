@@ -2,6 +2,8 @@
   "framework": "NIST Cybersecurity Framework 2.0",
   "version": "2.0 (February 2024)",
   "jurisdiction": "US (voluntary, international use)",
+  "source_url": "https://doi.org/10.6028/NIST.CSWP.29",
+  "source_note": "Official NIST CSF 2.0 publication (CSWP 29). Control identifiers and titles verified against it; see also the NIST Cybersecurity Framework site.",
   "note": "CSF 2.0 adds the GOVERN (GV) function and renames access control to PR.AA (Identity Management, Authentication, and Access Control) — formerly PR.AC in CSF 1.1. Use PR.AA codes, not PR.AC.",
   "functions": {
     "GV": "GOVERN",

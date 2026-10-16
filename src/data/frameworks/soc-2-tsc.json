@@ -2,6 +2,8 @@
   "framework": "AICPA SOC 2 — Trust Services Criteria",
   "version": "TSC 2017 (revised 2022)",
   "jurisdiction": "US (AICPA)",
+  "source_url": "https://www.aicpa-cima.com/resources/landing/trust-services-criteria",
+  "source_note": "AICPA Trust Services Criteria are copyrighted. This catalog lists only the official criteria identifiers and short names (factual references), not the AICPA text.",
   "note": "Common Criteria (CC1–CC9) apply to every SOC 2; A/C/PI/P criteria apply when those categories are in scope.",
   "criteria": [
     { "id": "CC1.1", "category": "Control Environment", "name": "Commitment to integrity and ethical values" },

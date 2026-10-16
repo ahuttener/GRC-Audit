@@ -2,6 +2,8 @@
   "framework": "ISO/IEC 27001:2022 Annex A",
   "version": "2022",
   "jurisdiction": "International",
+  "source_url": "https://www.iso.org/standard/27001",
+  "source_note": "ISO/IEC 27001:2022 is a paid, copyrighted standard. This catalog lists only the official Annex A control identifiers and short titles (factual references), not the standard's text.",
   "note": "93 controls across four themes. Use these 2022 codes, not the legacy 2013 (A.5–A.18) numbering.",
   "themes": {
     "A.5": "Organizational controls",

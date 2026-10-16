@@ -2,6 +2,8 @@
   "framework": "HIPAA Security, Privacy & Breach Notification Rules",
   "version": "45 CFR Part 164 (Security Rule Subpart C in force; Jan-2025 NPRM still proposed)",
   "jurisdiction": "US (health / covered entities and business associates)",
+  "source_url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164",
+  "source_note": "Official eCFR text of 45 CFR Part 164 (public domain). Citations verified against it.",
   "note": "Applies only when electronic protected health information (ePHI) is involved.",
   "controls": [
     { "id": "164.308(a)(1)(ii)(A)", "section": "Administrative Safeguards", "name": "Risk analysis", "description": "Conduct an accurate and thorough assessment of risks to ePHI." },

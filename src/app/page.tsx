@@ -7,6 +7,7 @@ import IncidentConsole from "@/components/IncidentConsole";
 import ResultView from "@/components/ResultView";
 import GrcPrinciples from "@/components/GrcPrinciples";
 import RiskTreatmentCard from "@/components/RiskTreatmentCard";
+import Sources from "@/components/Sources";
 import type { AuditResponse } from "@/types/grc";
 import { analyzeLocally } from "@/lib/analyzer";
 import { verify } from "@/lib/grounding";
@@ -106,6 +107,8 @@ export default function Page() {
             mode; add an API key for full LLM analysis of any incident.
           </p>
         )}
+
+        <Sources />
       </div>
 
       <footer className="mt-10 border-t border-line py-6 text-center text-xs text-slate-500">

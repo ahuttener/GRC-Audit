@@ -2,6 +2,8 @@
   "framework": "California Consumer Privacy Act (CCPA) as amended by CPRA",
   "version": "Cal. Civ. Code § 1798.100 et seq. + CCR Title 11 regulations",
   "jurisdiction": "US – California",
+  "source_url": "https://oag.ca.gov/privacy/ccpa",
+  "source_note": "California OAG CCPA page and the public Civil Code text (leginfo.legislature.ca.gov). Section numbers verified against them.",
   "sections": [
     { "id": "1798.100", "name": "General duties / right to know; reasonable security", "description": "Consumers' right to know; businesses must implement reasonable security procedures appropriate to the information (1798.100(e))." },
     { "id": "1798.81.5", "name": "Duty to maintain reasonable security procedures", "description": "Businesses owning/licensing personal information must use reasonable security practices to protect it from unauthorized access, destruction, use, modification or disclosure." },
