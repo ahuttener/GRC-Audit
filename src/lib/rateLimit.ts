@@ -1,7 +1,11 @@
 // Best-effort credit protection for the Next.js API route (Node/Vercel deployments).
-// Mirrors the PHP endpoint: a per-visitor hourly limit plus a global daily cap, after which the
-// route answers with the free demo engine instead of calling the LLM. Counters live in memory
-// (per server instance), and visitor IPs are kept only as salted hashes — never stored raw.
+// Mirrors the PHP endpoint: a per-visitor hourly limit plus a daily cap, after which the route
+// answers with the free demo engine instead of calling the LLM. Visitor IPs are kept only as
+// salted hashes — never stored raw.
+//
+// Limits of this design: counters live in memory, so on Vercel/serverless each instance counts on
+// its own and a cold start resets it — the daily cap is per instance, not global. For a hard,
+// global ceiling, also set a spend limit on the API key's workspace in the Claude Console.
 
 import { createHash, randomBytes } from "crypto";
 
@@ -50,8 +54,16 @@ export function createLimiter(limits: Limits, now: () => number = Date.now) {
   };
 }
 
-/** Client IP as seen behind a proxy/CDN (first X-Forwarded-For hop), or "unknown". */
-export function clientIp(headers: Headers): string {
+/**
+ * Visitor key for the hourly limit. X-Forwarded-For / X-Real-IP are only trusted behind a proxy
+ * that sets them itself (Vercel, or TRUST_PROXY=1 behind your own reverse proxy). On a directly
+ * exposed Node server a client could send a different X-Forwarded-For on every call, so all
+ * callers share one bucket there instead — the hourly limit then acts globally, which is stricter
+ * but cannot be bypassed. The daily cap applies in every case.
+ */
+export function clientIp(headers: Headers, env: Record<string, string | undefined> = process.env): string {
+  const trusted = env.VERCEL === "1" || env.TRUST_PROXY === "1";
+  if (!trusted) return "untrusted-proxy";
   const fwd = headers.get("x-forwarded-for");
   if (fwd) return fwd.split(",")[0].trim() || "unknown";
   return headers.get("x-real-ip")?.trim() || "unknown";

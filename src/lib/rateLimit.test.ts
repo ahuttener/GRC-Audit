@@ -43,11 +43,21 @@ describe("limitsFromEnv", () => {
 });
 
 describe("clientIp", () => {
-  it("uses the first X-Forwarded-For hop", () => {
-    expect(clientIp(new Headers({ "x-forwarded-for": "203.0.113.7, 10.0.0.1" }))).toBe("203.0.113.7");
+  const behindProxy = { VERCEL: "1" };
+
+  it("behind a trusted proxy, uses the first X-Forwarded-For hop", () => {
+    expect(clientIp(new Headers({ "x-forwarded-for": "203.0.113.7, 10.0.0.1" }), behindProxy)).toBe("203.0.113.7");
+    expect(clientIp(new Headers({ "x-forwarded-for": "203.0.113.7" }), { TRUST_PROXY: "1" })).toBe("203.0.113.7");
   });
-  it("falls back to X-Real-IP, then 'unknown'", () => {
-    expect(clientIp(new Headers({ "x-real-ip": "198.51.100.2" }))).toBe("198.51.100.2");
-    expect(clientIp(new Headers())).toBe("unknown");
+
+  it("behind a trusted proxy, falls back to X-Real-IP, then 'unknown'", () => {
+    expect(clientIp(new Headers({ "x-real-ip": "198.51.100.2" }), behindProxy)).toBe("198.51.100.2");
+    expect(clientIp(new Headers(), behindProxy)).toBe("unknown");
+  });
+
+  it("without a trusted proxy, ignores spoofable headers and uses one shared bucket", () => {
+    const a = clientIp(new Headers({ "x-forwarded-for": "203.0.113.7" }), {});
+    const b = clientIp(new Headers({ "x-forwarded-for": "198.51.100.9" }), {});
+    expect(a).toBe(b);
   });
 });

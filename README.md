@@ -139,7 +139,11 @@ php/
 - **GitHub Pages (demo engine):** every push to `main` runs the tests and publishes
   [ahuttener.github.io/GRC-Audit](https://ahuttener.github.io/GRC-Audit/).
 - **Node / Vercel (optional):** `npm run build && npm run start` with `ANTHROPIC_API_KEY` set; the
-  Next.js route applies the same limits (`AI_PER_IP_HOURLY`, `AI_DAILY_LIMIT`).
+  Next.js route applies the same limits (`AI_PER_IP_HOURLY`, `AI_DAILY_LIMIT`). Two honest caveats:
+  the counters live in memory, so on serverless each instance counts separately and resets on a
+  cold start; and `X-Forwarded-For` is only trusted on Vercel or with `TRUST_PROXY=1` behind your
+  own proxy (otherwise every caller shares one hourly bucket, so spoofing the header gains nothing).
+  For a hard global ceiling, also set a **spend limit** on the key's workspace in the Claude Console.
 
 ## Disclaimer
 
