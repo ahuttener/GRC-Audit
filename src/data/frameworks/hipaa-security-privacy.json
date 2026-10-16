@@ -1,0 +1,28 @@
+{
+  "framework": "HIPAA Security, Privacy & Breach Notification Rules",
+  "version": "45 CFR Part 164 (Security Rule Subpart C in force; Jan-2025 NPRM still proposed)",
+  "jurisdiction": "US (health / covered entities and business associates)",
+  "note": "Applies only when electronic protected health information (ePHI) is involved.",
+  "controls": [
+    { "id": "164.308(a)(1)(ii)(A)", "section": "Administrative Safeguards", "name": "Risk analysis", "description": "Conduct an accurate and thorough assessment of risks to ePHI." },
+    { "id": "164.308(a)(1)(ii)(B)", "section": "Administrative Safeguards", "name": "Risk management", "description": "Implement measures to reduce risks to a reasonable and appropriate level." },
+    { "id": "164.308(a)(3)(ii)(C)", "section": "Administrative Safeguards", "name": "Termination procedures", "description": "Procedures for terminating access to ePHI when employment ends." },
+    { "id": "164.308(a)(4)", "section": "Administrative Safeguards", "name": "Information access management", "description": "Authorize and control access to ePHI (access authorization/establishment/modification)." },
+    { "id": "164.308(a)(5)", "section": "Administrative Safeguards", "name": "Security awareness and training", "description": "Train the workforce, including on malicious software and password management." },
+    { "id": "164.308(a)(6)", "section": "Administrative Safeguards", "name": "Security incident procedures", "description": "Identify, respond to and document security incidents." },
+    { "id": "164.308(a)(7)", "section": "Administrative Safeguards", "name": "Contingency plan", "description": "Data backup, disaster recovery and emergency mode operation plans." },
+    { "id": "164.308(b)(1)", "section": "Administrative Safeguards", "name": "Business associate contracts", "description": "Obtain satisfactory assurances that business associates safeguard ePHI." },
+    { "id": "164.312(a)(1)", "section": "Technical Safeguards", "name": "Access control", "description": "Unique user identification, emergency access, automatic logoff, encryption/decryption." },
+    { "id": "164.312(a)(2)(iv)", "section": "Technical Safeguards", "name": "Encryption and decryption", "description": "Encrypt and decrypt ePHI (addressable)." },
+    { "id": "164.312(b)", "section": "Technical Safeguards", "name": "Audit controls", "description": "Record and examine activity in systems that contain or use ePHI." },
+    { "id": "164.312(c)(1)", "section": "Technical Safeguards", "name": "Integrity", "description": "Protect ePHI from improper alteration or destruction." },
+    { "id": "164.312(d)", "section": "Technical Safeguards", "name": "Person or entity authentication", "description": "Verify that a person or entity seeking access is who they claim to be." },
+    { "id": "164.312(e)(1)", "section": "Technical Safeguards", "name": "Transmission security", "description": "Guard against unauthorized access to ePHI transmitted over networks; integrity controls and encryption (e)(2)(ii)." },
+    { "id": "164.314(a)", "section": "Organizational Requirements", "name": "Business associate arrangements", "description": "Contract requirements between covered entities and business associates." },
+    { "id": "164.316", "section": "Policies, Procedures & Documentation", "name": "Documentation requirements", "description": "Maintain written policies/procedures and retain documentation for six years." },
+    { "id": "164.404", "section": "Breach Notification Rule", "name": "Notification to individuals", "description": "Notify affected individuals without unreasonable delay and no later than 60 days after discovery." },
+    { "id": "164.408", "section": "Breach Notification Rule", "name": "Notification to the Secretary (HHS)", "description": "Notify HHS; breaches of 500+ individuals within 60 days, smaller breaches annually." },
+    { "id": "164.410", "section": "Breach Notification Rule", "name": "Notification by a business associate", "description": "Business associate must notify the covered entity of a breach without unreasonable delay." },
+    { "id": "164.502", "section": "Privacy Rule", "name": "Uses and disclosures of PHI", "description": "General rules governing permitted uses and disclosures, including the minimum necessary standard." }
+  ]
+}

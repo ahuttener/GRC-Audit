@@ -1,0 +1,18 @@
+{
+  "framework": "California Consumer Privacy Act (CCPA) as amended by CPRA",
+  "version": "Cal. Civ. Code § 1798.100 et seq. + CCR Title 11 regulations",
+  "jurisdiction": "US – California",
+  "sections": [
+    { "id": "1798.100", "name": "General duties / right to know; reasonable security", "description": "Consumers' right to know; businesses must implement reasonable security procedures appropriate to the information (1798.100(e))." },
+    { "id": "1798.81.5", "name": "Duty to maintain reasonable security procedures", "description": "Businesses owning/licensing personal information must use reasonable security practices to protect it from unauthorized access, destruction, use, modification or disclosure." },
+    { "id": "1798.82", "name": "Breach notification", "description": "Disclose a breach of unencrypted personal information to affected California residents in the most expedient time possible and without unreasonable delay." },
+    { "id": "1798.105", "name": "Right to delete", "description": "Consumers may request deletion of personal information collected about them." },
+    { "id": "1798.106", "name": "Right to correct", "description": "Consumers may request correction of inaccurate personal information." },
+    { "id": "1798.120", "name": "Right to opt out of sale/sharing", "description": "Consumers may direct a business not to sell or share their personal information." },
+    { "id": "1798.121", "name": "Right to limit use of sensitive personal information", "description": "Consumers may limit the use and disclosure of sensitive personal information." },
+    { "id": "1798.140(ae)", "name": "Definition — sensitive personal information", "description": "Includes government IDs, financial account + access credentials, precise geolocation, health, and similar." },
+    { "id": "1798.140(ag)", "name": "Definition — service provider", "description": "A person that processes personal information on behalf of a business under a written contract." },
+    { "id": "1798.150", "name": "Private right of action (data breach)", "description": "Consumers may sue for statutory damages when nonencrypted/nonredacted personal information is subject to unauthorized access due to failure to maintain reasonable security." },
+    { "id": "CCR 7051", "name": "Service provider / contractor due diligence", "description": "Regulations requiring businesses to exercise due diligence over service providers and contractors." }
+  ]
+}

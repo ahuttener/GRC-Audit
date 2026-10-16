@@ -1,0 +1,31 @@
+{
+  "framework": "AICPA SOC 2 — Trust Services Criteria",
+  "version": "TSC 2017 (revised 2022)",
+  "jurisdiction": "US (AICPA)",
+  "note": "Common Criteria (CC1–CC9) apply to every SOC 2; A/C/PI/P criteria apply when those categories are in scope.",
+  "criteria": [
+    { "id": "CC1.1", "category": "Control Environment", "name": "Commitment to integrity and ethical values" },
+    { "id": "CC2.1", "category": "Communication & Information", "name": "Quality information is obtained and used to support internal control" },
+    { "id": "CC3.2", "category": "Risk Assessment", "name": "Identifies and analyzes risks to the achievement of objectives" },
+    { "id": "CC3.4", "category": "Risk Assessment", "name": "Identifies and assesses changes that could impact the system of internal control" },
+    { "id": "CC4.1", "category": "Monitoring Activities", "name": "Evaluations are used to ascertain whether controls are operating" },
+    { "id": "CC5.2", "category": "Control Activities", "name": "Control activities over technology are selected and developed" },
+    { "id": "CC6.1", "category": "Logical & Physical Access", "name": "Logical access security software, infrastructure and architecture are implemented to protect information" },
+    { "id": "CC6.2", "category": "Logical & Physical Access", "name": "Registration and authorization of new internal and external users before granting access" },
+    { "id": "CC6.3", "category": "Logical & Physical Access", "name": "Access is modified and removed on a timely basis (role change / termination)" },
+    { "id": "CC6.6", "category": "Logical & Physical Access", "name": "Security measures protect against threats from sources outside system boundaries" },
+    { "id": "CC6.7", "category": "Logical & Physical Access", "name": "Transmission, movement and removal of information is restricted to authorized users and processes" },
+    { "id": "CC6.8", "category": "Logical & Physical Access", "name": "Controls to prevent or detect and act upon the introduction of unauthorized or malicious software" },
+    { "id": "CC7.1", "category": "System Operations", "name": "Detection and monitoring to identify configuration changes and vulnerabilities" },
+    { "id": "CC7.2", "category": "System Operations", "name": "System components are monitored for anomalies indicative of security events" },
+    { "id": "CC7.3", "category": "System Operations", "name": "Security events are evaluated to determine whether they constitute incidents" },
+    { "id": "CC7.4", "category": "System Operations", "name": "Incidents are responded to through a defined incident response program" },
+    { "id": "CC7.5", "category": "System Operations", "name": "Identified incidents are resolved, and recovery is performed" },
+    { "id": "CC8.1", "category": "Change Management", "name": "Changes to infrastructure, data, software and procedures are authorized, designed, tested and approved" },
+    { "id": "CC9.2", "category": "Risk Mitigation", "name": "Vendor and business partner risks are assessed and managed" },
+    { "id": "A1.2", "category": "Availability", "name": "Environmental protections, backup processes and recovery infrastructure are implemented" },
+    { "id": "C1.1", "category": "Confidentiality", "name": "Confidential information is identified and maintained" },
+    { "id": "C1.2", "category": "Confidentiality", "name": "Confidential information is disposed of to meet objectives" },
+    { "id": "P4.1", "category": "Privacy", "name": "Personal information is collected, used, retained and disclosed consistent with the entity's objectives" }
+  ]
+}
