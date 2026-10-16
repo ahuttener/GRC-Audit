@@ -17,6 +17,16 @@ RedirectMatch 404 /\.(git|github)(/|$)
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+
+  # Pages must be revalidated on every visit: a cached page from an older deploy points at
+  # script files that no longer exist, and Next.js then fails with "client-side exception".
+  <FilesMatch "\.(html|txt)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  # Scripts and styles carry a content hash in their name, so they can be cached for good.
+  <FilesMatch "\.(js|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
 </IfModule>
 
 ErrorDocument 404 /grcaudit/404.html
