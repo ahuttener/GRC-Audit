@@ -12,17 +12,26 @@ type Archetype =
   | "ransomware"
   | "generic";
 
+// Bilingual (EN + PT-BR) keyword hints so typed incidents classify in demo mode.
 const KEYWORDS: Record<Exclude<Archetype, "generic">, string[]> = {
   "zombie-account": ["terminated", "orphan", "offboard", "deprovision", "access review",
-    "former employee", "leaver", "still had", "active login", "unrevoked", "dormant"],
+    "former employee", "leaver", "still had", "active login", "unrevoked", "dormant",
+    "demitido", "desligado", "ex-funcion", "conta órfã", "conta orfa", "acesso ativo",
+    "revisão de acesso", "revisao de acesso", "ainda tinha acesso", "login ativo"],
   "secret-exposure": ["api key", "secret key", "secret", "credentials", "committed", "github",
-    "repository", "repo", "aws root", "root secret", "hardcoded", "exposed key", "access key"],
+    "repository", "repo", "aws root", "root secret", "hardcoded", "exposed key", "access key",
+    "chave de api", "chave secreta", "credenciais", "segredo", "repositório", "repositorio",
+    "chave aws", "chave exposta", "commitou", "subiu a chave"],
   "data-leak": ["spreadsheet", "personal inbox", "emailed", "exfiltrat", "leak", "unencrypted",
-    "downloaded", "external inbox", "forwarded", "personal email", "customer data"],
+    "downloaded", "external inbox", "forwarded", "personal email", "customer data",
+    "planilha", "e-mail pessoal", "email pessoal", "gmail pessoal", "baixou", "vazou", "vazamento",
+    "cartão de crédito", "cartao de credito", "clientes", "conta pessoal", "trabalhar de casa",
+    "mandou para o", "enviou para o", "exfiltr"],
   "missing-mfa": ["mfa", "multi-factor", "multi factor", "2fa", "two-factor", "without mfa",
-    "no mfa", "not configured with"],
+    "no mfa", "not configured with", "autenticação", "autenticacao", "dois fatores",
+    "sem mfa", "duplo fator", "múltiplo fator"],
   ransomware: ["ransom", "ransomware", "encrypted the", "malware", "backup server", "locked out",
-    "extortion"],
+    "extortion", "resgate", "sequestr", "criptografou os", "cópia de segurança"],
 };
 
 export function classify(incident: string): Archetype {
