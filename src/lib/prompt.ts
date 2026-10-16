@@ -23,7 +23,7 @@ Return ONLY a single valid JSON object (no markdown, no prose outside the JSON) 
   "incident_title": "Concise headline of the security/audit issue",
   "incident_summary": "1-2 sentence executive briefing explaining the exposure",
   "severity_level": "Low" | "Medium" | "High" | "Critical",
-  "failure_category": "Identity & Access Management" | "Data Leakage" | "Cloud Misconfiguration" | "Third-Party Risk" | "Endpoint Security",
+  "failure_category": "Identity & Access Management" | "Data Leakage" | "Cloud Misconfiguration" | "Third-Party Risk" | "Endpoint Security" | "Vulnerability Management" | "Governance & Compliance",
   "recommended_strategy": { "strategy": "MITIGATE" | "AVOID" | "TRANSFER" | "ACCEPT", "rationale": "one line, e.g. 'via automated SCIM deprovisioning'" },
   "grounded_frameworks": {
     "iso_27001_2022": { "control_id": "A.5.18", "control_name": "...", "category": "People / Organizational / Physical / Technological", "audit_finding": "..." },

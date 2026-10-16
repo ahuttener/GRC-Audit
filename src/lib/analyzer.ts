@@ -10,6 +10,15 @@ type Archetype =
   | "data-leak"
   | "missing-mfa"
   | "ransomware"
+  | "phishing-bec"
+  | "vendor-breach"
+  | "lost-device-phi"
+  | "public-bucket"
+  | "late-notification"
+  | "dsar-ignored"
+  | "missing-logs"
+  | "unpatched-vpn"
+  | "unapproved-change"
   | "generic";
 
 // Bilingual (EN + PT-BR) keyword hints so typed incidents classify in demo mode.
@@ -32,6 +41,34 @@ const KEYWORDS: Record<Exclude<Archetype, "generic">, string[]> = {
     "sem mfa", "duplo fator", "múltiplo fator"],
   ransomware: ["ransom", "ransomware", "encrypted the", "malware", "backup server", "locked out",
     "extortion", "resgate", "sequestr", "criptografou os", "cópia de segurança"],
+  "phishing-bec": ["phishing", "phish", "fake login", "mailbox", "inbox rule", "spoofed",
+    "business email compromise", "invoice", "wire transfer", "bank details", "impersonat",
+    "e-mail falso", "página falsa", "golpe", "fatura", "boleto", "dados bancários", "caixa de correio"],
+  "vendor-breach": ["vendor", "supplier", "third-party", "third party", "processor", "saas provider",
+    "service provider", "subcontract", "onboarded", "fornecedor", "terceiro", "terceirizad",
+    "prestador", "operador de dados", "parceiro"],
+  "lost-device-phi": ["laptop", "stolen", "lost device", "patient", "ephi", "protected health",
+    "clinic", "hospital", "diagnos", "medical", "remote wipe", "notebook", "roubad", "furtad",
+    "perdido", "paciente", "prontuário", "prontuario", "clínica", "clinica", "médic"],
+  "public-bucket": ["s3", "bucket", "publicly accessible", "public access", "misconfigur",
+    "blob storage", "storage account", "anyone with the link", "open to the internet",
+    "bucket público", "acesso público", "configuração errada", "configuracao errada", "aberto na internet"],
+  "late-notification": ["72-hour", "72 hour", "72h", "72 horas", "notified", "notification deadline",
+    "supervisory authority", "regulator", "escalated", "late notification", "deadline",
+    "notificad", "notificação", "prazo", "atraso", "atrasad", "autoridade", "anpd"],
+  "dsar-ignored": ["data subject", "access request", "subject access", "dsar", "erasure",
+    "right to delete", "deletion request", "opt-out", "opt out", "do not sell", "copy of their",
+    "titular", "direito de acesso", "pedido de acesso", "exclusão dos dados", "apagar meus dados",
+    "cópia dos meus dados", "lgpd"],
+  "missing-logs": ["no logs", "logging was disabled", "logging", "log retention", "audit log",
+    "siem", "could not determine", "no visibility", "logs were", "sem logs", "registros",
+    "retenção de logs", "não havia logs", "nao havia logs", "não conseguimos saber"],
+  "unpatched-vpn": ["unpatched", "patch", "cve", "vpn", "vulnerability", "exploited", "zero-day",
+    "asset inventory", "scanning", "firewall", "sem patch", "vulnerabilidade", "atualização de segurança",
+    "não atualizad", "nao atualizad", "explorad"],
+  "unapproved-change": ["change request", "change management", "change ticket", "unapproved change",
+    "hotfix", "outage", "rollback", "downtime", "deployed directly", "peer review", "change advisory",
+    "mudança", "mudanca", "fora do ar", "indisponib", "sem aprovação", "sem aprovacao", "direto em produção"],
 };
 
 export function classify(incident: string): Archetype {
@@ -206,6 +243,290 @@ const CURATED: Record<Exclude<Archetype, "generic">, AuditResult> = {
         "Determine the entry vector, dwell time and whether data was exfiltrated (double extortion); engage IR/forensics and, as appropriate, law enforcement; if personal data was breached, trigger GDPR Art. 33 (72h)/34 and applicable US state notifications.",
       step_3_permanent_fix:
         "Implement immutable, offline/air-gapped backups with tested restores (3-2-1-1), segment and harden access to backup infrastructure, deploy EDR with rapid isolation, and enforce MFA + least privilege with an exercised IR/DR runbook.",
+    },
+  },
+
+  "phishing-bec": {
+    incident_title: "Phishing-Driven Mailbox Takeover and Invoice Fraud (BEC)",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via phishing-resistant MFA, mail-rule monitoring and out-of-band payment verification" },
+    incident_summary:
+      "A finance user's Microsoft 365 credentials were harvested by a phishing page; the attacker controlled the mailbox for two days, hid replies with an inbox rule and attempted invoice-redirection fraud against a client.",
+    severity_level: "High",
+    failure_category: "Identity & Access Management",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "PR.AT-01, PR.AA-03, DE.AE-02, RS.MI-01", function_name: "PROTECT, DETECT & RESPOND — Awareness, Authentication, Event Analysis and Mitigation" },
+      iso_27001_2022: { control_id: "A.6.3 & A.8.5 & A.5.24", control_name: "Awareness & training / Secure authentication / Incident management planning", category: "People & Technological", audit_finding: "Awareness did not prevent credential entry, phishable authentication allowed the takeover, and it went undetected for two days." },
+      soc_2: { criteria: "CC2.1, CC6.1, CC7.2", name: "Information & communication / Logical access / Anomaly monitoring", audit_finding: "Mailbox compromise and malicious inbox rules were not detected by monitoring controls." },
+      gdpr: { article: "Art. 32 & Art. 33", name: "Security of processing / DPA notification", regulatory_risk: "The mailbox held client personal data; unauthorized access is a personal data breach to assess for 72-hour notification." },
+      ccpa_cpra: { section: "1798.81.5 & 1798.82", name: "Reasonable security / Breach notification", regulatory_risk: "If mailbox content included California residents' PI with account or financial data, notification may be required." },
+      hipaa: { rule: "N/A", name: "HIPAA Security Rule", regulatory_risk: "Not applicable unless the mailbox contained ePHI." },
+    },
+    audit_evidence_required: [
+      "The phishing email (headers, URL) and the fake login page.",
+      "Entra ID / Microsoft 365 sign-in logs showing the attacker's IPs and sessions.",
+      "Unified audit log: inbox rules created, emails sent, items accessed (MailItemsAccessed).",
+      "The spoofed invoice and the client's confirmation of whether payment was made.",
+      "Phishing-awareness training records and the MFA/conditional-access policy.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Reset the password, revoke all sessions and refresh tokens, remove the malicious inbox rule and any forwarding, block the attacker's IPs/domain and phone the client not to pay the altered invoice; ask the bank to recall any transfer already made.",
+      step_2_leak_and_legal:
+        "Use the audit log to list every message and attachment the attacker read or sent, identify whose personal data was exposed and assess GDPR Art. 33 (72h)/34 and state notification duties; report the fraud attempt to the police and the bank.",
+      step_3_permanent_fix:
+        "Enforce phishing-resistant MFA with conditional access, alert on new inbox rules and impossible-travel sign-ins, enable DMARC/anti-spoofing, require out-of-band verification for any change of bank details, and run targeted phishing simulations for finance.",
+    },
+  },
+
+  "vendor-breach": {
+    incident_title: "Breach at a SaaS Processor Exposed Customer Data",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via supplier due diligence and contractual security clauses; TRANSFER residual liability via contract and cyber insurance" },
+    incident_summary:
+      "A third-party SaaS provider acting as a data processor suffered a database breach exposing our EU and US customers' records; it was onboarded with no security assessment and no breach-notification clause.",
+    severity_level: "High",
+    failure_category: "Third-Party Risk",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "GV.SC-04, GV.SC-06, GV.SC-07", function_name: "GOVERN — Cybersecurity Supply Chain Risk Management" },
+      iso_27001_2022: { control_id: "A.5.19 & A.5.20 & A.5.22", control_name: "Supplier relationships / Security in supplier agreements / Monitoring of supplier services", category: "Organizational", audit_finding: "Supplier onboarded without a risk assessment, the agreement lacks security and breach-notification terms, and the service was never monitored." },
+      soc_2: { criteria: "CC9.2, CC3.4", name: "Vendor risk management / Assessing changes in risk", audit_finding: "No vendor due diligence or ongoing monitoring operated for a processor handling confidential customer data." },
+      gdpr: { article: "Art. 28 & Art. 33", name: "Processor obligations / DPA notification", regulatory_risk: "As controller we remain accountable: no Art. 28 contract terms, and the 72-hour clock starts when we become aware." },
+      ccpa_cpra: { section: "1798.140(ag) & 1798.82", name: "Service provider definition / Breach notification", regulatory_risk: "Without a compliant service-provider contract the disclosure may be treated as a sale or share; affected Californians must be notified." },
+      hipaa: { rule: "164.308(b)(1) & 164.314(a)", name: "Business associate contracts", regulatory_risk: "If the vendor handled ePHI, a missing business associate agreement is itself a violation." },
+    },
+    audit_evidence_required: [
+      "The vendor's breach notice, timeline and list of affected records.",
+      "The contract / DPA (or its absence) and any security schedule.",
+      "Vendor onboarding and risk-assessment records (or proof none exist).",
+      "Data-flow map showing which of our data the vendor processed.",
+      "Our register of processing activities and processors (Art. 30).",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Rotate any integration credentials and API keys shared with the vendor, restrict or suspend the data feed, and obtain the vendor's forensic findings and confirmation that the attacker's access is closed.",
+      step_2_leak_and_legal:
+        "Determine which customers and data elements were exposed; notify the lead DPA within 72h of awareness (Art. 33) and high-risk subjects (Art. 34), notify Californians under 1798.82, and record the incident in the breach register.",
+      step_3_permanent_fix:
+        "Introduce a third-party risk programme: tiering, security questionnaires or SOC 2 reports before onboarding, Art. 28 DPAs with breach-notification SLAs and audit rights, and periodic re-assessment of critical suppliers.",
+    },
+  },
+
+  "lost-device-phi": {
+    incident_title: "Stolen Unencrypted Laptop Containing Patient Records",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via full-disk encryption and MDM remote wipe; AVOID local PHI exports" },
+    incident_summary:
+      "A clinic laptop holding 2,300 patient records (including diagnoses and insurance numbers) was stolen; it was not encrypted and not enrolled in remote wipe — a presumptive HIPAA breach.",
+    severity_level: "Critical",
+    failure_category: "Data Leakage",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "PR.DS-01, ID.AM-02", function_name: "PROTECT & IDENTIFY — Data-at-Rest Security and Asset Inventory" },
+      iso_27001_2022: { control_id: "A.8.1 & A.7.9 & A.8.24", control_name: "User endpoint devices / Security of assets off-premises / Use of cryptography", category: "Technological & Physical", audit_finding: "An endpoint storing sensitive data was neither encrypted nor remotely manageable while off-premises." },
+      soc_2: { criteria: "CC6.7, C1.1", name: "Protection of data on portable media / Confidentiality", audit_finding: "Confidential data stored on an unprotected portable device." },
+      gdpr: { article: "Art. 9 & Art. 32 & Art. 34", name: "Special-category data / Security / Notifying data subjects", regulatory_risk: "Health data is special-category; without encryption the breach is high-risk and data subjects must be informed." },
+      ccpa_cpra: { section: "1798.150", name: "Private right of action", regulatory_risk: "Theft of nonencrypted medical and insurance information exposes the organisation to statutory damages." },
+      hipaa: { rule: "164.312(a)(2)(iv) & 164.404 & 164.408", name: "Encryption / Notice to individuals / Notice to the Secretary", regulatory_risk: "Encryption would have provided safe harbour; unsecured PHI requires notice to individuals within 60 days and to HHS (500+ in a state also triggers media notice)." },
+    },
+    audit_evidence_required: [
+      "Police report and the timeline of the theft.",
+      "Asset record of the laptop, its encryption status and MDM enrolment.",
+      "The exported file: fields and number of patients.",
+      "Policy on storing ePHI on endpoints and any approval for the export.",
+      "HIPAA risk analysis covering portable devices.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Disable the user's accounts and cached credentials used on the laptop, revoke VPN certificates, and attempt remote lock or wipe if any agent can still reach it.",
+      step_2_leak_and_legal:
+        "Complete the HIPAA four-factor risk assessment; with unencrypted PHI, notify the 2,300 patients within 60 days, notify HHS and, if more than 500 residents of a state are affected, prominent media; check GDPR Art. 33/34 if any EU patients are included.",
+      step_3_permanent_fix:
+        "Enforce full-disk encryption and MDM (remote wipe) on every endpoint, block local exports of PHI in favour of access through the EHR, and add portable devices to the risk analysis and asset inventory.",
+    },
+  },
+
+  "public-bucket": {
+    incident_title: "Publicly Accessible Cloud Storage Bucket With Customer Documents",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via account-level public-access blocks and continuous configuration scanning" },
+    incident_summary:
+      "An S3 bucket misconfigured during a migration was publicly readable and held invoices and ID scans of California and EU customers; access logs show downloads by unknown IPs.",
+    severity_level: "Critical",
+    failure_category: "Cloud Misconfiguration",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "PR.PS-01, PR.DS-01, DE.CM-09", function_name: "PROTECT & DETECT — Configuration Management, Data Security and Monitoring" },
+      iso_27001_2022: { control_id: "A.8.9 & A.5.23", control_name: "Configuration management / Information security for use of cloud services", category: "Technological & Organizational", audit_finding: "A secure baseline configuration was not enforced for cloud storage and the change escaped review." },
+      soc_2: { criteria: "CC6.1, CC7.1", name: "Logical access / Detection of configuration changes", audit_finding: "Public exposure of confidential data was neither prevented nor detected by configuration monitoring." },
+      gdpr: { article: "Art. 32 & Art. 33 & Art. 34", name: "Security / DPA notification / Notifying data subjects", regulatory_risk: "Confirmed downloads of identity documents make this a high-risk breach requiring 72-hour DPA notice and notice to subjects." },
+      ccpa_cpra: { section: "1798.150 & 1798.82", name: "Private right of action / Breach notification", regulatory_risk: "Nonencrypted ID numbers were exposed and downloaded — statutory damages and a duty to notify Californians." },
+      hipaa: { rule: "N/A", name: "HIPAA Security Rule", regulatory_risk: "Not applicable — no health information indicated." },
+    },
+    audit_evidence_required: [
+      "Bucket policy/ACL history and CloudTrail events showing when it became public.",
+      "S3 server access logs listing the objects downloaded and the requesting IPs.",
+      "Inventory of the objects and the personal data they contain.",
+      "Migration change record and the cloud configuration baseline.",
+      "The researcher's report and correspondence.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Enable S3 Block Public Access on the bucket and account, remove public ACLs/policies, preserve the access logs and ask the researcher to confirm their copy is deleted.",
+      step_2_leak_and_legal:
+        "Map exactly which objects were downloaded and by whom; notify the DPA within 72h and affected subjects (Art. 33/34), notify Californians (1798.82) and offer identity-theft protection, since ID documents were exposed.",
+      step_3_permanent_fix:
+        "Enforce account-wide public-access blocks via organisation policy, scan infrastructure-as-code and live accounts with CSPM, require peer-reviewed changes for storage permissions, and alert whenever a resource becomes public.",
+    },
+  },
+
+  "late-notification": {
+    incident_title: "Personal Data Breach Notified After the 72-Hour Deadline",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via an owned incident-response process with a breach-notification playbook" },
+    incident_summary:
+      "A personal data breach sat unescalated for six days and the supervisory authority was notified nine days after detection, breaching the GDPR 72-hour rule — a governance failure in incident response.",
+    severity_level: "High",
+    failure_category: "Governance & Compliance",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "RS.MA-01, RS.CO-02, GV.RR-02", function_name: "RESPOND & GOVERN — Incident Management, Reporting and Roles" },
+      iso_27001_2022: { control_id: "A.5.24 & A.5.25 & A.5.26", control_name: "Incident management planning / Assessment of events / Response to incidents", category: "Organizational", audit_finding: "No defined owner, triage criteria or escalation timeline for personal data breaches." },
+      soc_2: { criteria: "CC7.3, CC7.4", name: "Evaluating security events / Incident response", audit_finding: "The incident was not evaluated and escalated within the defined timeframe." },
+      gdpr: { article: "Art. 33 & Art. 83", name: "Notification to the DPA / Administrative fines", regulatory_risk: "Late notification without reasons for the delay is an infringement in its own right, fineable up to €10m or 2% of global turnover." },
+      ccpa_cpra: { section: "1798.82", name: "Breach notification", regulatory_risk: "California requires notice in the most expedient time possible and without unreasonable delay if Californians are affected." },
+      hipaa: { rule: "164.404", name: "Notification to individuals", regulatory_risk: "If ePHI was involved, the 60-day outer limit for notice applies and unreasonable delay is a violation." },
+    },
+    audit_evidence_required: [
+      "Incident ticket with detection, escalation and notification timestamps.",
+      "The DPA notification and the reasons given for the delay (Art. 33(1)).",
+      "Incident-response policy, playbook and RACI showing roles.",
+      "Breach register entry (Art. 33(5)).",
+      "On-call and escalation records for the period.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Send any outstanding information to the authority now with a written explanation of the delay, and confirm the breach itself is contained.",
+      step_2_leak_and_legal:
+        "Reassess the risk to data subjects and whether Art. 34 notice is still owed; record the root cause of the delay in the breach register and prepare for questions from the regulator.",
+      step_3_permanent_fix:
+        "Assign an incident owner and a DPO escalation path, adopt a breach playbook with a 24-hour internal escalation SLA and notification templates, train staff to recognise a personal data breach, and test it in tabletop exercises.",
+    },
+  },
+
+  "dsar-ignored": {
+    incident_title: "Data Subject Access and Erasure Requests Left Unanswered",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via a tracked request workflow with statutory deadlines" },
+    incident_summary:
+      "A data subject access request and a later erasure request went unanswered for three months, and California opt-out requests were never processed — a failure to honour data subject rights.",
+    severity_level: "Medium",
+    failure_category: "Governance & Compliance",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "GV.OC-01, GV.PO-01", function_name: "GOVERN — Organizational Context and Policy" },
+      iso_27001_2022: { control_id: "A.5.34 & A.5.31", control_name: "Privacy and protection of PII / Legal, statutory, regulatory and contractual requirements", category: "Organizational", audit_finding: "No process ensured privacy requests were logged, owned and answered within the legal deadlines." },
+      soc_2: { criteria: "P4.1", name: "Privacy — use, retention and disposal", audit_finding: "Privacy commitments to data subjects were not met." },
+      gdpr: { article: "Art. 15-22 & Art. 5", name: "Data subject rights / Principles (accountability)", regulatory_risk: "One month to respond (extendable by two); three months of silence is an infringement and a likely complaint to the DPA." },
+      ccpa_cpra: { section: "1798.105 & 1798.120 & 1798.121", name: "Right to delete / Opt-out of sale or sharing / Limit use of sensitive PI", regulatory_risk: "Requests must be answered within 45 days and opt-outs honoured within 15 business days; enforceable by the CPPA and the AG." },
+      hipaa: { rule: "N/A", name: "HIPAA Privacy Rule", regulatory_risk: "Not applicable unless the requests concerned PHI." },
+    },
+    audit_evidence_required: [
+      "The original requests with their received dates.",
+      "The shared inbox or ticket history showing who saw them and when.",
+      "The privacy-request procedure and response templates.",
+      "Records of opt-out signals received (including Global Privacy Control) and how they were applied.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Answer the outstanding requests now: provide the copy of the data, complete the erasure (or explain a lawful exemption), apply every pending opt-out and apologise to the requesters.",
+      step_2_leak_and_legal:
+        "Search the same inbox for other unanswered requests, record the failures and be ready for a DPA or CPPA complaint; no breach notification is needed, as no data was exposed.",
+      step_3_permanent_fix:
+        "Create a dedicated request channel with a ticketing workflow, identity verification and automatic deadline alerts (one month GDPR / 45 days CCPA), honour opt-out preference signals, and report request metrics to management.",
+    },
+  },
+
+  "missing-logs": {
+    incident_title: "Intrusion Could Not Be Investigated — Logging Disabled",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via centralised logging with adequate retention and SIEM coverage" },
+    incident_summary:
+      "Suspicious activity on a database server could not be investigated because server logging was off, audit-log retention was 7 days and the SIEM was not ingesting the events.",
+    severity_level: "High",
+    failure_category: "Governance & Compliance",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "DE.CM-01, DE.CM-03, RS.AN-03", function_name: "DETECT & RESPOND — Continuous Monitoring and Incident Analysis" },
+      iso_27001_2022: { control_id: "A.8.15 & A.8.16", control_name: "Logging / Monitoring activities", category: "Technological", audit_finding: "Event logs were not produced, retained or reviewed for a system holding sensitive data." },
+      soc_2: { criteria: "CC7.2, CC4.1", name: "Monitoring for anomalies / Ongoing evaluations", audit_finding: "Monitoring did not cover the server, so anomalies could be neither detected nor investigated." },
+      gdpr: { article: "Art. 32 & Art. 33", name: "Security / DPA notification", regulatory_risk: "Without logs a breach cannot be ruled out, so notification may have to be made on a worst-case basis." },
+      ccpa_cpra: { section: "1798.81.5", name: "Reasonable security procedures", regulatory_risk: "Logging and monitoring are part of recognised 'reasonable security' baselines." },
+      hipaa: { rule: "164.312(b)", name: "Audit controls", regulatory_risk: "If the database holds ePHI, audit controls that record activity are required." },
+    },
+    audit_evidence_required: [
+      "Server and database logging configuration (before and after).",
+      "SIEM source inventory showing the missing feed.",
+      "The logging and retention standard.",
+      "Whatever partial evidence exists: network flow logs, EDR telemetry, cloud logs.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Isolate or closely watch the server, enable logging immediately, take a forensic image and collect any remaining telemetry (EDR, firewall, flow logs).",
+      step_2_leak_and_legal:
+        "Reconstruct what is possible; if personal data could have been accessed and compromise cannot be excluded, assess Art. 33 notification on a precautionary basis and document the reasoning.",
+      step_3_permanent_fix:
+        "Define a logging standard (what to log, 12-month retention), forward every critical source to the SIEM with alerts for missing feeds, protect logs from tampering and review coverage quarterly.",
+    },
+  },
+
+  "unpatched-vpn": {
+    incident_title: "Known Critical VPN Vulnerability Exploited",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via a complete asset inventory and patch SLAs for internet-facing systems" },
+    incident_summary:
+      "Attackers exploited a known critical CVE on the VPN gateway; the patch had been available for six weeks but the device was missing from the asset inventory and the scanning scope.",
+    severity_level: "Critical",
+    failure_category: "Vulnerability Management",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "ID.AM-02, ID.RA-01, RS.MI-02", function_name: "IDENTIFY & RESPOND — Asset Inventory, Vulnerability Identification and Mitigation" },
+      iso_27001_2022: { control_id: "A.8.8 & A.5.9", control_name: "Management of technical vulnerabilities / Inventory of information and other associated assets", category: "Technological & Organizational", audit_finding: "An internet-facing asset was not inventoried, so it was neither scanned nor patched within SLA." },
+      soc_2: { criteria: "CC7.1, CC6.6", name: "Vulnerability detection / Boundary protection", audit_finding: "Vulnerability management did not cover a perimeter device." },
+      gdpr: { article: "Art. 32", name: "Security of processing", regulatory_risk: "Leaving an available critical patch unapplied undermines 'appropriate' security; if personal data was reached, Art. 33 applies." },
+      ccpa_cpra: { section: "1798.81.5", name: "Reasonable security procedures", regulatory_risk: "Timely patching of known exploited vulnerabilities is baseline reasonable security." },
+      hipaa: { rule: "164.308(a)(1)(ii)(B)", name: "Risk management", regulatory_risk: "If the network carries ePHI, unmanaged known vulnerabilities breach the risk-management requirement." },
+    },
+    audit_evidence_required: [
+      "Vendor advisory and CVE publication date versus the patch date.",
+      "Asset inventory and scanner scope (showing the gap).",
+      "VPN gateway logs and indicators of compromise.",
+      "Patch-management policy with SLAs.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Patch or take the gateway offline, check the vendor's indicators of compromise, reset VPN user credentials and certificates, and hunt for lateral movement.",
+      step_2_leak_and_legal:
+        "Establish what the attacker did after gaining access and whether personal data was reached; notify under GDPR Art. 33 (72h) and state laws if a breach is confirmed.",
+      step_3_permanent_fix:
+        "Automate asset discovery, bring every internet-facing device into vulnerability scanning, set patch SLAs (e.g. 48h for known-exploited vulnerabilities), and subscribe to vendor and CISA KEV alerts.",
+    },
+  },
+
+  "unapproved-change": {
+    incident_title: "Unapproved Production Change Caused a Customer Outage",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via enforced change management with peer review, testing and rollback plans" },
+    incident_summary:
+      "A hotfix pushed directly to production without a change request, review or testing took the customer portal down for five hours with no rollback plan.",
+    severity_level: "Medium",
+    failure_category: "Governance & Compliance",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "PR.PS-01, RC.RP-01", function_name: "PROTECT & RECOVER — Configuration Management and Recovery" },
+      iso_27001_2022: { control_id: "A.8.32 & A.8.31", control_name: "Change management / Separation of development, test and production environments", category: "Technological", audit_finding: "The change bypassed approval and testing; developers can deploy straight to production." },
+      soc_2: { criteria: "CC8.1, A1.2", name: "Change management / Availability and recovery", audit_finding: "A SOC 2 change-management exception: the change was not authorised, tested or approved before implementation." },
+      gdpr: { article: "N/A", name: "—", regulatory_risk: "Not applicable unless the outage caused loss or corruption of personal data (then Art. 32 availability applies)." },
+      ccpa_cpra: { section: "N/A", name: "—", regulatory_risk: "Not applicable — no personal information exposed." },
+      hipaa: { rule: "N/A", name: "—", regulatory_risk: "Not applicable unless the availability of ePHI was affected." },
+    },
+    audit_evidence_required: [
+      "Deployment log and commit showing who deployed what and when.",
+      "Absence of a change ticket or approval for the deployment.",
+      "Outage timeline, monitoring alerts and customer impact.",
+      "Change-management policy and CI/CD branch-protection settings.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Roll back or fix forward through the normal pipeline, restore service and keep customers informed on the status page.",
+      step_2_leak_and_legal:
+        "Run a blameless post-incident review and check contractual SLAs for service credits or customer notices; no data-protection notification is expected.",
+      step_3_permanent_fix:
+        "Enforce branch protection and mandatory peer review, deploy only through CI/CD with automated tests, require a change record (with an emergency-change path), and keep a tested rollback for every release.",
     },
   },
 };

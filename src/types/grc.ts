@@ -7,7 +7,9 @@ export type FailureCategory =
   | "Data Leakage"
   | "Cloud Misconfiguration"
   | "Third-Party Risk"
-  | "Endpoint Security";
+  | "Endpoint Security"
+  | "Vulnerability Management"
+  | "Governance & Compliance";
 
 export type RiskStrategy = "MITIGATE" | "AVOID" | "TRANSFER" | "ACCEPT";
 

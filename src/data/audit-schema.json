@@ -11,7 +11,9 @@
         "Data Leakage",
         "Cloud Misconfiguration",
         "Third-Party Risk",
-        "Endpoint Security"
+        "Endpoint Security",
+        "Vulnerability Management",
+        "Governance & Compliance"
       ]
     },
     "recommended_strategy": {

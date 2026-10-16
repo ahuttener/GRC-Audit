@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Download, Check } from "lucide-react";
+import { Copy, Download, Check, FileText } from "lucide-react";
 import type { AuditResponse } from "@/types/grc";
 import { toMarkdown } from "@/lib/toMarkdown";
+import { toReportHtml } from "@/lib/toReportHtml";
 
 export default function ExportActions({ resp }: { resp: AuditResponse }) {
   const [copied, setCopied] = useState(false);
@@ -31,6 +32,37 @@ export default function ExportActions({ resp }: { resp: AuditResponse }) {
     URL.revokeObjectURL(url);
   };
 
+  // Print-ready report with the CyberSecInfo emblem; the print dialog saves it as a PDF.
+  // A hidden iframe avoids pop-up blockers and keeps the user on the page.
+  const printReport = () => {
+    const logo = `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH || ""}/emblem.png`;
+    const frame = document.createElement("iframe");
+    frame.setAttribute("aria-hidden", "true");
+    frame.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;";
+    document.body.appendChild(frame);
+    const doc = frame.contentDocument;
+    const win = frame.contentWindow;
+    if (!doc || !win) {
+      frame.remove();
+      return;
+    }
+    doc.open();
+    doc.write(toReportHtml(resp, logo));
+    doc.close();
+    const go = () => {
+      win.focus();
+      win.print();
+      setTimeout(() => frame.remove(), 1000);
+    };
+    const img = doc.images[0];
+    if (img && !img.complete) {
+      img.addEventListener("load", go, { once: true });
+      img.addEventListener("error", go, { once: true });
+    } else {
+      go();
+    }
+  };
+
   return (
     <div className="flex flex-wrap gap-3">
       <button
@@ -46,6 +78,13 @@ export default function ExportActions({ resp }: { resp: AuditResponse }) {
       >
         <Download className="h-4 w-4" />
         Export to Markdown
+      </button>
+      <button
+        onClick={printReport}
+        className="inline-flex items-center gap-2 rounded-lg border border-accent/50 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent transition hover:bg-accent-strong hover:text-gray-900"
+      >
+        <FileText className="h-4 w-4" />
+        Download PDF report
       </button>
     </div>
   );

@@ -6,8 +6,15 @@ export interface Scenario {
   title: string;
   badge: string;
   /** lucide-react icon name, mapped in the UI. */
-  icon: "user-x" | "key-round" | "mail-warning" | "shield-off";
-  archetype: "zombie-account" | "secret-exposure" | "data-leak" | "missing-mfa";
+  icon:
+    | "user-x" | "key-round" | "mail-warning" | "shield-off" | "database-backup" | "fish"
+    | "handshake" | "laptop" | "cloud-off" | "timer-off" | "file-question" | "eye-off"
+    | "bug" | "git-pull-request";
+  archetype:
+    | "zombie-account" | "secret-exposure" | "data-leak" | "missing-mfa" | "ransomware"
+    | "phishing-bec" | "vendor-breach" | "lost-device-phi" | "public-bucket"
+    | "late-notification" | "dsar-ignored" | "missing-logs" | "unpatched-vpn"
+    | "unapproved-change";
   description: string;
 }
 
@@ -47,5 +54,95 @@ export const SCENARIOS: Scenario[] = [
     archetype: "missing-mfa",
     description:
       "An internal audit revealed that 12 engineering accounts with administrative access to production AWS environments were not configured with Multi-Factor Authentication (MFA).",
+  },
+  {
+    id: "ransomware",
+    title: "Ransomware Reached the Backup Server",
+    badge: "Resilience",
+    icon: "database-backup",
+    archetype: "ransomware",
+    description:
+      "Ransomware spread from a compromised workstation to the file servers and then to the backup server, which was joined to the same domain. The attackers encrypted the backups and are demanding a ransom; the last offline copy is three weeks old.",
+  },
+  {
+    id: "phishing-bec",
+    title: "Phishing Led to Mailbox Takeover",
+    badge: "Social Engineering",
+    icon: "fish",
+    archetype: "phishing-bec",
+    description:
+      "A finance employee entered their Microsoft 365 password on a fake login page sent in a phishing email. The attacker used the mailbox for two days, created an inbox rule to hide replies, and sent a spoofed invoice asking a client to change the bank details for a wire transfer.",
+  },
+  {
+    id: "vendor-breach",
+    title: "Vendor (SaaS Processor) Breach Exposed Our Customers",
+    badge: "Supply Chain",
+    icon: "handshake",
+    archetype: "vendor-breach",
+    description:
+      "Our third-party SaaS provider, which processes our customers' support tickets as a data processor, informed us that an attacker accessed its database. Records of our EU and US customers were exposed. The vendor was onboarded without a security assessment and the contract has no breach-notification clause.",
+  },
+  {
+    id: "lost-device-phi",
+    title: "Stolen Laptop With Patient Records",
+    badge: "Healthcare",
+    icon: "laptop",
+    archetype: "lost-device-phi",
+    description:
+      "A clinic laptop was stolen from a clinician's car. It held an export of 2,300 patient records (names, dates of birth, diagnoses and insurance numbers) — ePHI on a device without full-disk encryption and not enrolled in remote wipe.",
+  },
+  {
+    id: "public-bucket",
+    title: "Public Cloud Storage Bucket",
+    badge: "Cloud Security",
+    icon: "cloud-off",
+    archetype: "public-bucket",
+    description:
+      "A security researcher reported that one of our AWS S3 buckets was publicly accessible. It was misconfigured during a migration and contained invoices and ID document scans of California and EU customers; access logs show downloads from unknown IP addresses.",
+  },
+  {
+    id: "late-notification",
+    title: "Breach Notified After the 72-Hour Deadline",
+    badge: "Incident Response",
+    icon: "timer-off",
+    archetype: "late-notification",
+    description:
+      "A personal data breach was detected on a Friday but only escalated to the DPO the following Thursday. The supervisory authority was notified 9 days after detection, well past the 72-hour deadline, because no one owned the incident response process.",
+  },
+  {
+    id: "dsar-ignored",
+    title: "Data Subject Request Ignored",
+    badge: "Privacy Rights",
+    icon: "file-question",
+    archetype: "dsar-ignored",
+    description:
+      "A customer submitted a data subject access request asking for a copy of their personal data and later a right-to-erasure request. Both requests sat unanswered in a shared inbox for 3 months; California customers' opt-out (do not sell or share) requests were also never processed.",
+  },
+  {
+    id: "missing-logs",
+    title: "No Logs to Investigate an Intrusion",
+    badge: "Detection & Monitoring",
+    icon: "eye-off",
+    archetype: "missing-logs",
+    description:
+      "After suspicious activity on a database server, the team could not determine what happened: logging was disabled on the server, audit log retention was only 7 days, and the SIEM was not receiving its events.",
+  },
+  {
+    id: "unpatched-vpn",
+    title: "Unpatched VPN Exploited",
+    badge: "Vulnerability Mgmt",
+    icon: "bug",
+    archetype: "unpatched-vpn",
+    description:
+      "Attackers exploited a known critical CVE in our VPN gateway. The vendor patch had been available for 6 weeks but was never applied because the device was missing from the asset inventory and outside the vulnerability scanning scope.",
+  },
+  {
+    id: "unapproved-change",
+    title: "Unapproved Production Change Caused an Outage",
+    badge: "Change Mgmt",
+    icon: "git-pull-request",
+    archetype: "unapproved-change",
+    description:
+      "An engineer deployed a hotfix directly to production without a change request, peer review or testing. It caused a 5-hour outage of the customer portal and there was no rollback plan.",
   },
 ];

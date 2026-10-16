@@ -2,13 +2,26 @@
 
 import type { ComponentType } from "react";
 import { SCENARIOS } from "@/data/scenarios";
-import { UserX, KeyRound, MailWarning, ShieldOff, Loader2, Search } from "lucide-react";
+import {
+  UserX, KeyRound, MailWarning, ShieldOff, DatabaseBackup, Fish, Handshake, Laptop, CloudOff,
+  TimerOff, FileQuestion, EyeOff, Bug, GitPullRequest, Loader2, Search,
+} from "lucide-react";
 
 const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   "user-x": UserX,
   "key-round": KeyRound,
   "mail-warning": MailWarning,
   "shield-off": ShieldOff,
+  "database-backup": DatabaseBackup,
+  fish: Fish,
+  handshake: Handshake,
+  laptop: Laptop,
+  "cloud-off": CloudOff,
+  "timer-off": TimerOff,
+  "file-question": FileQuestion,
+  "eye-off": EyeOff,
+  bug: Bug,
+  "git-pull-request": GitPullRequest,
 };
 
 const MAX = 4000;
@@ -26,7 +39,7 @@ export default function IncidentConsole({ value, onChange, onPick, onSubmit, loa
   return (
     <div className="rounded-2xl border border-line bg-panel p-5">
       <label className="text-sm font-semibold text-slate-200">
-        Describe a security incident, misconfiguration or audit finding
+        Choose an incident to test — or describe your own
       </label>
 
       {/* Quick-test scenario pills */}
