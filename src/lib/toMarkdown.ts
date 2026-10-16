@@ -36,6 +36,8 @@ export function toMarkdown(resp: AuditResponse): string {
   L.push(`- **${gf.ccpa_cpra.section}:** ${gf.ccpa_cpra.regulatory_risk}`);
   L.push(`### HIPAA — ${gf.hipaa.name}`);
   L.push(`- **${gf.hipaa.rule}:** ${gf.hipaa.regulatory_risk}`);
+  L.push(`### AIUC-1 (AI agents) — ${gf.aiuc_1?.name ?? "AI agent standard"}`);
+  L.push(`- **${gf.aiuc_1?.requirements ?? "N/A"}:** ${gf.aiuc_1?.audit_finding ?? "Not applicable — no AI system or agent is involved."}`);
   L.push("");
   L.push(`## Audit evidence required`);
   for (const e of r.audit_evidence_required) L.push(`- ${e}`);

@@ -161,6 +161,7 @@ $catalogs = [
     'gdpr-official.json'          => 'articles',
     'ccpa-cpra.json'              => 'sections',
     'hipaa-security-privacy.json' => 'controls',
+    'aiuc-1.json'                 => 'requirements',
 ];
 $context = '';
 foreach ($catalogs as $file => $key) {
@@ -198,6 +199,8 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   (PR.AA..., not 1.1 PR.AC...), precise 45 CFR citations for HIPAA, exact EU GDPR article numbers.
 - If a framework genuinely does not apply (e.g. HIPAA with no ePHI), set its id field to "N/A"
   and explain why in its finding/risk field. Never invent an ID to fill a slot.
+- AIUC-1 (the AI agent standard) applies ONLY when an AI system, chatbot, LLM or AI agent is part of
+  the incident. Otherwise set aiuc_1.requirements to "N/A" and say no AI system is involved.
 - Choose the primary ISO 31000 / NIST risk-treatment strategy (MITIGATE, AVOID, TRANSFER, ACCEPT)
   with a one-line rationale; most live incidents are MITIGATE.
 - Write every free-text field in the same language as the incident description. Keep control IDs,
@@ -207,7 +210,7 @@ Field guidance: incident_title = concise headline; incident_summary = 1-2 senten
 briefing; iso_27001_2022.category = People / Organizational / Physical / Technological;
 soc_2.criteria like "CC6.2, CC6.3"; gdpr.article like "Art. 32 & Art. 33"; ccpa_cpra.section like
 "1798.150"; hipaa.rule like "164.308(a)(3)(ii)(C)"; nist_csf_2.subcategories like
-"PR.AA-01, PR.AA-05"; audit_evidence_required = concrete artefacts an auditor would request;
+"PR.AA-01, PR.AA-05"; aiuc_1.requirements like "B006, D003"; audit_evidence_required = concrete artefacts an auditor would request;
 remediation_plan = immediate containment, then data-leak forensics + statutory notification
 triggers (e.g. GDPR 72h), then the permanent architectural/process fix.
 PROMPT;

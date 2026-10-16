@@ -9,12 +9,13 @@ export interface Scenario {
   icon:
     | "user-x" | "key-round" | "mail-warning" | "shield-off" | "database-backup" | "fish"
     | "handshake" | "laptop" | "cloud-off" | "timer-off" | "file-question" | "eye-off"
-    | "bug" | "git-pull-request";
+    | "bug" | "git-pull-request" | "syringe" | "trash" | "message-warning" | "brain";
   archetype:
     | "zombie-account" | "secret-exposure" | "data-leak" | "missing-mfa" | "ransomware"
     | "phishing-bec" | "vendor-breach" | "lost-device-phi" | "public-bucket"
     | "late-notification" | "dsar-ignored" | "missing-logs" | "unpatched-vpn"
-    | "unapproved-change";
+    | "unapproved-change" | "prompt-injection" | "agent-unauthorized-action" | "ai-hallucination"
+    | "shadow-ai";
   description: string;
 }
 
@@ -144,5 +145,41 @@ export const SCENARIOS: Scenario[] = [
     archetype: "unapproved-change",
     description:
       "An engineer deployed a hotfix directly to production without a change request, peer review or testing. It caused a 5-hour outage of the customer portal and there was no rollback plan.",
+  },
+  {
+    id: "prompt-injection",
+    title: "Prompt Injection Made the AI Agent Leak Data",
+    badge: "AI Agent Security",
+    icon: "syringe",
+    archetype: "prompt-injection",
+    description:
+      "Our AI customer-support agent read a support ticket that contained hidden prompt injection instructions. Following them, the agent used its CRM tool to look up other customers' orders and replied with their names, addresses and order history. The agent had read access to every customer record and no filter for adversarial input.",
+  },
+  {
+    id: "agent-unauthorized-action",
+    title: "AI Coding Agent Deleted Production Data",
+    badge: "Agentic AI",
+    icon: "trash",
+    archetype: "agent-unauthorized-action",
+    description:
+      "An autonomous AI coding agent was asked to clean up test data. Running with an engineer's production credentials and without human approval for destructive commands, the agent dropped a production database table. Agent activity was not logged, so reconstructing its tool calls took two days.",
+  },
+  {
+    id: "ai-hallucination",
+    title: "Chatbot Invented a Refund Policy",
+    badge: "AI Reliability",
+    icon: "message-warning",
+    archetype: "ai-hallucination",
+    description:
+      "Our website chatbot, built on an LLM, hallucinated a refund policy that does not exist and promised dozens of customers full refunds after 90 days. Customers were not told they were talking to an AI, and there was no plan for handling chatbot hallucinations; the company had to honour the refunds.",
+  },
+  {
+    id: "shadow-ai",
+    title: "Staff Pasted Customer Data into a Public AI Tool",
+    badge: "Shadow AI",
+    icon: "brain",
+    archetype: "shadow-ai",
+    description:
+      "Employees pasted customer spreadsheets with personal data and proprietary source code into a free public generative AI chatbot whose terms allow prompts to be used for model training. There is no AI acceptable use policy, and the AI vendor was never assessed.",
   },
 ];

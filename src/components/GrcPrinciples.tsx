@@ -2,7 +2,7 @@ import { Gavel, ScanSearch, Gauge, ShieldCheck, Activity } from "lucide-react";
 
 const PRINCIPLES = [
   { icon: Gavel, name: "Govern", desc: "Policies, roles and accountability frame every finding and decision." },
-  { icon: ScanSearch, name: "Identify", desc: "Classify the incident and map it to controls across six frameworks." },
+  { icon: ScanSearch, name: "Identify", desc: "Classify the incident and map it to controls across seven frameworks." },
   { icon: Gauge, name: "Assess", desc: "Rate severity and regulatory exposure; every control ID is grounded." },
   { icon: ShieldCheck, name: "Mitigate", desc: "Contain, investigate & notify, then fix the root cause." },
   { icon: Activity, name: "Monitor", desc: "Evidence and continuous controls to detect and prevent recurrence." },

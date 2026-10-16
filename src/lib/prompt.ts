@@ -12,6 +12,8 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
 - If an incident touches multiple frameworks, cross-reference them accurately.
 - If a framework genuinely does not apply (e.g. HIPAA with no ePHI), set its id field to "N/A" and
   explain why in its finding/risk field. Never invent an ID to fill a slot.
+- AIUC-1 (the AI agent standard) applies ONLY when an AI system, chatbot, LLM or AI agent is part of
+  the incident. Otherwise set aiuc_1.requirements to "N/A" and say no AI system is involved.
 - Choose the primary ISO 31000 / NIST risk-treatment strategy (MITIGATE, AVOID, TRANSFER or ACCEPT)
   with a one-line rationale; most live incidents are MITIGATE.
 - Write every free-text field in the same language as the incident description (e.g. Portuguese in,
@@ -31,7 +33,8 @@ Return ONLY a single valid JSON object (no markdown, no prose outside the JSON) 
     "gdpr": { "article": "Art. 32 & Art. 33", "name": "...", "regulatory_risk": "..." },
     "ccpa_cpra": { "section": "1798.81.5", "name": "...", "regulatory_risk": "..." },
     "hipaa": { "rule": "164.308(a)(3)(ii)(C)", "name": "...", "regulatory_risk": "..." },
-    "nist_csf_2": { "subcategories": "PR.AA-01, PR.AA-05", "function_name": "PROTECT — Identity Management & Access Control" }
+    "nist_csf_2": { "subcategories": "PR.AA-01, PR.AA-05", "function_name": "PROTECT — Identity Management & Access Control" },
+    "aiuc_1": { "requirements": "B006, D003", "name": "...", "audit_finding": "..." }
   },
   "audit_evidence_required": [ "..." ],
   "remediation_plan": {

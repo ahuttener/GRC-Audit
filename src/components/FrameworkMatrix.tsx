@@ -37,6 +37,12 @@ function build(gf: GroundedFrameworks): Card[] {
       label: "HIPAA", jurisdiction: "US – Health", accent: "text-rose-300 border-rose-400/30",
       id: gf.hipaa.rule, name: gf.hipaa.name, body: gf.hipaa.regulatory_risk,
     },
+    {
+      label: "AIUC-1", jurisdiction: "AI agents", accent: "text-emerald-300 border-emerald-400/30",
+      id: gf.aiuc_1?.requirements ?? "N/A",
+      name: gf.aiuc_1?.name ?? "AI agent standard",
+      body: gf.aiuc_1?.audit_finding ?? "Not applicable — no AI system or agent is involved.",
+    },
   ];
 }
 

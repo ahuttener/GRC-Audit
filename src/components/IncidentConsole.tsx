@@ -4,7 +4,8 @@ import type { ComponentType } from "react";
 import { SCENARIOS } from "@/data/scenarios";
 import {
   UserX, KeyRound, MailWarning, ShieldOff, DatabaseBackup, Fish, Handshake, Laptop, CloudOff,
-  TimerOff, FileQuestion, EyeOff, Bug, GitPullRequest, Loader2, Search,
+  TimerOff, FileQuestion, EyeOff, Bug, GitPullRequest, Syringe, Trash2, MessageSquareWarning, Brain,
+  Loader2, Search,
 } from "lucide-react";
 
 const ICONS: Record<string, ComponentType<{ className?: string }>> = {
@@ -22,6 +23,10 @@ const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   "eye-off": EyeOff,
   bug: Bug,
   "git-pull-request": GitPullRequest,
+  syringe: Syringe,
+  trash: Trash2,
+  "message-warning": MessageSquareWarning,
+  brain: Brain,
 };
 
 const MAX = 4000;

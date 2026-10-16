@@ -45,6 +45,12 @@ export interface HipaaMapping {
   name: string;
   regulatory_risk: string;
 }
+/** AIUC-1 (AI agent standard) — only applies when an AI system or agent is involved. */
+export interface AiucMapping {
+  requirements: string;
+  name: string;
+  audit_finding: string;
+}
 export interface NistMapping {
   subcategories: string;
   function_name: string;
@@ -57,6 +63,8 @@ export interface GroundedFrameworks {
   ccpa_cpra: CcpaMapping;
   hipaa: HipaaMapping;
   nist_csf_2: NistMapping;
+  /** Optional so curated results without AI involvement can omit it (shown as N/A). */
+  aiuc_1?: AiucMapping;
 }
 
 export interface RemediationPlan {

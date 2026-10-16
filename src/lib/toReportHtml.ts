@@ -36,6 +36,12 @@ export function toReportHtml(resp: AuditResponse, logoUrl: string, generatedAt: 
     ["GDPR", gf.gdpr.article, gf.gdpr.name, gf.gdpr.regulatory_risk],
     ["CCPA/CPRA", gf.ccpa_cpra.section, gf.ccpa_cpra.name, gf.ccpa_cpra.regulatory_risk],
     ["HIPAA", gf.hipaa.rule, gf.hipaa.name, gf.hipaa.regulatory_risk],
+    [
+      "AIUC-1 (AI agents)",
+      gf.aiuc_1?.requirements ?? "N/A",
+      gf.aiuc_1?.name ?? "AI agent standard",
+      gf.aiuc_1?.audit_finding ?? "Not applicable — no AI system or agent is involved.",
+    ],
   ];
 
   return `<!doctype html>

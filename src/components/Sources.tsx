@@ -4,6 +4,7 @@ import gdpr from "@/data/frameworks/gdpr-official.json";
 import hipaa from "@/data/frameworks/hipaa-security-privacy.json";
 import soc from "@/data/frameworks/soc-2-tsc.json";
 import ccpa from "@/data/frameworks/ccpa-cpra.json";
+import aiuc from "@/data/frameworks/aiuc-1.json";
 
 interface Cat {
   framework: string;
@@ -11,7 +12,7 @@ interface Cat {
   source_url: string;
 }
 
-const CATS: Cat[] = [nist, iso, soc, gdpr, ccpa, hipaa] as unknown as Cat[];
+const CATS: Cat[] = [nist, iso, soc, gdpr, ccpa, hipaa, aiuc] as unknown as Cat[];
 
 // Direct official download/text per source, plus whether it is free. Keyed by source_url.
 const DOWNLOAD: Record<string, { free: boolean; url: string; label: string }> = {
@@ -44,6 +45,11 @@ const DOWNLOAD: Record<string, { free: boolean; url: string; label: string }> = 
     free: true,
     url: "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164",
     label: "Official text (eCFR)",
+  },
+  "https://www.aiuc-1.com/": {
+    free: true,
+    url: "https://standard.aiuc-1.com/",
+    label: "Official standard",
   },
 };
 

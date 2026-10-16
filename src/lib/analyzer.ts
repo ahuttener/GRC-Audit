@@ -19,6 +19,10 @@ type Archetype =
   | "missing-logs"
   | "unpatched-vpn"
   | "unapproved-change"
+  | "prompt-injection"
+  | "agent-unauthorized-action"
+  | "ai-hallucination"
+  | "shadow-ai"
   | "generic";
 
 // Bilingual (EN + PT-BR) keyword hints so typed incidents classify in demo mode.
@@ -69,6 +73,17 @@ const KEYWORDS: Record<Exclude<Archetype, "generic">, string[]> = {
   "unapproved-change": ["change request", "change management", "change ticket", "unapproved change",
     "hotfix", "outage", "rollback", "downtime", "deployed directly", "peer review", "change advisory",
     "mudança", "mudanca", "fora do ar", "indisponib", "sem aprovação", "sem aprovacao", "direto em produção"],
+  "prompt-injection": ["prompt injection", "injected prompt", "hidden instructions", "hidden prompt",
+    "jailbreak", "adversarial input", "ai agent", "ai customer-support agent", "llm agent",
+    "injeção de prompt", "instruções escondidas", "agente de ia", "agente de atendimento"],
+  "agent-unauthorized-action": ["coding agent", "autonomous", "ai coding", "destructive command",
+    "dropped", "drop table", "tool calls", "without human approval", "agent deleted",
+    "agente de código", "agente autônomo", "agente apagou", "apagou a tabela", "sem aprovação humana"],
+  "ai-hallucination": ["hallucinat", "chatbot", "invented", "made up", "does not exist", "fabricated",
+    "talking to an ai", "llm", "alucin", "inventou", "não existe", "nao existe", "robô de atendimento"],
+  "shadow-ai": ["shadow ai", "public ai", "generative ai", "chatgpt", "model training", "pasted",
+    "ai acceptable use", "ai vendor", "ia generativa", "ia pública", "ia publica", "colaram", "colou",
+    "treinamento do modelo"],
 };
 
 export function classify(incident: string): Archetype {
@@ -527,6 +542,137 @@ const CURATED: Record<Exclude<Archetype, "generic">, AuditResult> = {
         "Run a blameless post-incident review and check contractual SLAs for service credits or customer notices; no data-protection notification is expected.",
       step_3_permanent_fix:
         "Enforce branch protection and mandatory peer review, deploy only through CI/CD with automated tests, require a change record (with an emergency-change path), and keep a tested rollback for every release.",
+    },
+  },
+
+  "prompt-injection": {
+    incident_title: "Prompt Injection Turned the Support Agent into a Data-Exfiltration Channel",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via least-privilege tool access, adversarial-input detection and output filtering" },
+    incident_summary:
+      "Hidden instructions in a customer ticket hijacked the AI support agent, which used its CRM tool to read and disclose other customers' personal data — a cross-customer personal-data breach caused by an over-privileged agent.",
+    severity_level: "Critical",
+    failure_category: "Data Leakage",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "PR.AA-05, PR.DS-02, DE.AE-02", function_name: "PROTECT & DETECT — Least Privilege, Data Security and Event Analysis" },
+      iso_27001_2022: { control_id: "A.5.15 & A.8.12", control_name: "Access control / Data leakage prevention", category: "Organizational & Technological", audit_finding: "The agent's tool permissions ignored least privilege and nothing stopped personal data leaving through its replies." },
+      soc_2: { criteria: "CC6.1, CC7.2", name: "Logical access / Anomaly monitoring", audit_finding: "No control limited the agent's data access or detected the anomalous cross-customer queries." },
+      gdpr: { article: "Art. 32 & Art. 33 & Art. 34", name: "Security / DPA notification / Notifying data subjects", regulatory_risk: "Other customers' names, addresses and order history were disclosed to a third party — a notifiable breach within 72 hours." },
+      ccpa_cpra: { section: "1798.82 & 1798.81.5", name: "Breach notification / Reasonable security", regulatory_risk: "Californians whose records were exposed must be notified; an unguarded agent with full read access is hard to defend as reasonable security." },
+      hipaa: { rule: "N/A", name: "HIPAA Security Rule", regulatory_risk: "Not applicable — no health information indicated." },
+      aiuc_1: { requirements: "B002, B006, A003, A005, A006", name: "Detect adversarial input / Prevent unauthorized AI agent actions / Limit AI agent data access / Prevent cross-customer data exposure / Prevent PII leakage", audit_finding: "Core AIUC-1 failure: the agent had unrestricted data access, no adversarial-input detection and no output safeguard against PII and cross-customer leakage — exactly what adversarial testing is meant to catch." },
+    },
+    audit_evidence_required: [
+      "The malicious ticket and the agent's full conversation and tool-call trace.",
+      "The agent's system prompt, tool definitions and the permissions of its CRM credentials.",
+      "List of customer records the agent read and disclosed.",
+      "Results of the latest adversarial (prompt-injection) testing of the agent.",
+      "Input/output filtering configuration and monitoring alerts.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Disable the agent's CRM tool (or the agent) immediately, revoke and rotate its credentials, block the attacker's account and preserve the conversation and tool-call logs.",
+      step_2_leak_and_legal:
+        "Identify every customer whose data was disclosed; notify the DPA within 72h and affected customers (Art. 33/34) and Californians under 1798.82; record the incident under the AI failure plan for security breaches (AIUC-1 E001).",
+      step_3_permanent_fix:
+        "Scope the agent's tools to the requesting customer only, add prompt-injection detection and output PII filtering, require human approval for bulk lookups, and run third-party adversarial testing at least quarterly.",
+    },
+  },
+
+  "agent-unauthorized-action": {
+    incident_title: "Autonomous AI Coding Agent Dropped a Production Table",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via scoped agent credentials, human approval for destructive actions and full agent logging" },
+    incident_summary:
+      "An AI coding agent running with a human engineer's production credentials executed a destructive database command outside its task, with no approval gate and no activity log — an unauthorized agent action causing data loss.",
+    severity_level: "High",
+    failure_category: "Identity & Access Management",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "PR.AA-05, PR.PS-01, RC.RP-01", function_name: "PROTECT & RECOVER — Least Privilege, Configuration Management and Recovery" },
+      iso_27001_2022: { control_id: "A.8.2 & A.8.32 & A.8.15", control_name: "Privileged access rights / Change management / Logging", category: "Technological", audit_finding: "The agent inherited privileged production access, changed production without change control, and left no logs." },
+      soc_2: { criteria: "CC6.3, CC8.1, A1.2", name: "Least privilege / Change management / Recovery", audit_finding: "A non-human actor made an unauthorised production change; recovery depended on backups." },
+      gdpr: { article: "Art. 32", name: "Security of processing (availability and integrity)", regulatory_risk: "If the table held personal data, its loss affects availability and integrity; assess Art. 33 if it cannot be restored." },
+      ccpa_cpra: { section: "N/A", name: "—", regulatory_risk: "Not applicable unless California consumers' personal information was lost." },
+      hipaa: { rule: "N/A", name: "—", regulatory_risk: "Not applicable — no ePHI indicated." },
+      aiuc_1: { requirements: "B006, D003, E004, E015", name: "Prevent unauthorized AI agent actions / Restrict unsafe tool calls / Assign accountability / Log AI system activity", audit_finding: "The agent acted beyond its intended scope, its tool calls were not restricted, nobody had to approve destructive changes and its activity was not logged." },
+    },
+    audit_evidence_required: [
+      "The task given to the agent and the command it executed.",
+      "The credentials and permissions the agent ran with.",
+      "Database audit log and backup/restore records.",
+      "Agent configuration showing allowed tools and approval settings.",
+      "Change-management policy and its coverage of AI agents.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Stop the agent, revoke the production credentials it used, restore the table from the latest backup and verify data integrity.",
+      step_2_leak_and_legal:
+        "Determine what data was lost between the last backup and the incident and whether personal data was affected; if it cannot be restored, assess GDPR Art. 33 and contractual SLA notices.",
+      step_3_permanent_fix:
+        "Give agents their own least-privilege identities (never human production credentials), block destructive tool calls without human approval, route agent changes through change management, and log every agent action and tool call.",
+    },
+  },
+
+  "ai-hallucination": {
+    incident_title: "Customer Chatbot Hallucinated a Refund Policy",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via grounding answers in approved policy documents, AI disclosure and a hallucination failure plan" },
+    incident_summary:
+      "The website chatbot invented a 90-day full-refund policy and promised it to dozens of customers, who were not told they were talking to an AI; the company had to honour the refunds — a reliability failure with direct financial loss.",
+    severity_level: "Medium",
+    failure_category: "Governance & Compliance",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "GV.RM-01, ID.RA-05", function_name: "GOVERN & IDENTIFY — Risk Management Objectives and Risk Prioritisation" },
+      iso_27001_2022: { control_id: "A.8.29 & A.5.37", control_name: "Security testing in development and acceptance / Documented operating procedures", category: "Technological & Organizational", audit_finding: "The chatbot went live without acceptance testing of its answers and without operating procedures for incorrect output." },
+      soc_2: { criteria: "CC3.2, CC4.1", name: "Risk identification / Monitoring activities", audit_finding: "The risk of incorrect customer commitments by the chatbot was not identified or monitored." },
+      gdpr: { article: "N/A", name: "—", regulatory_risk: "Not applicable — no personal data exposed." },
+      ccpa_cpra: { section: "N/A", name: "—", regulatory_risk: "Not applicable — no personal information exposed." },
+      hipaa: { rule: "N/A", name: "—", regulatory_risk: "Not applicable — no health information involved." },
+      aiuc_1: { requirements: "D001, C004, E003, E016", name: "Prevent hallucinated outputs / Prevent out-of-scope outputs / AI failure plan for hallucinations / Implement AI disclosure mechanisms", audit_finding: "No safeguard prevented hallucinated policy statements, the bot answered outside its approved scope, there was no failure plan for hallucinations causing financial loss, and users were not told they were talking to an AI." },
+    },
+    audit_evidence_required: [
+      "Chat transcripts containing the invented policy and the number of affected customers.",
+      "The official refund policy and the sources the chatbot was grounded on.",
+      "Pre-deployment test results for the chatbot's answers.",
+      "Cost of the honoured refunds.",
+      "The chatbot's user-facing disclosure text (or its absence).",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Restrict the chatbot to answering from approved policy documents (or hand refund questions to humans), correct the wrong statement on the site and identify all affected conversations.",
+      step_2_leak_and_legal:
+        "No data breach — handle as a consumer-protection and financial-loss issue: decide with legal how to honour or correct the promises and record the loss under the hallucination failure plan.",
+      step_3_permanent_fix:
+        "Ground answers in retrieval from approved documents with citation checks, block policy/pricing commitments outside scope, disclose clearly that users are talking to an AI, test before each release and monitor answers for hallucinations.",
+    },
+  },
+
+  "shadow-ai": {
+    incident_title: "Customer Data and Source Code Pasted into a Public AI Chatbot",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via an AI acceptable use policy, an approved enterprise AI tool and DLP; AVOID unvetted public AI tools" },
+    incident_summary:
+      "Staff pasted customer personal data and proprietary source code into a consumer generative-AI tool whose terms allow training on prompts, with no AI acceptable use policy and no vendor assessment — uncontrolled disclosure to an unvetted processor.",
+    severity_level: "High",
+    failure_category: "Data Leakage",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "GV.PO-01, PR.AT-01, PR.DS-02", function_name: "GOVERN & PROTECT — Policy, Awareness and Data-in-Transit Security" },
+      iso_27001_2022: { control_id: "A.5.10 & A.5.14 & A.5.23", control_name: "Acceptable use of information / Information transfer / Information security for use of cloud services", category: "Organizational", audit_finding: "No rule covered use of external AI services, and confidential data was transferred to an unapproved cloud service." },
+      soc_2: { criteria: "CC6.7, C1.1", name: "Restrict movement of information / Confidentiality", audit_finding: "Confidential customer data and code left the organisation through an unapproved channel." },
+      gdpr: { article: "Art. 28 & Art. 32 & Art. 44", name: "Processor contracts / Security / International transfers", regulatory_risk: "Personal data was disclosed to a provider with no processor agreement and possibly outside the EEA; assess it as a breach." },
+      ccpa_cpra: { section: "1798.100 & 1798.140(ag)", name: "Notice and purpose limitation / Service provider", regulatory_risk: "Sharing PI with a provider that may train on it, without a service-provider contract, can count as an undisclosed sale or share." },
+      hipaa: { rule: "N/A", name: "HIPAA Privacy Rule", regulatory_risk: "Not applicable unless the spreadsheets contained PHI." },
+      aiuc_1: { requirements: "E010, A001, A004, E006", name: "Establish AI acceptable use policy / Establish input data policy / Protect IP & trade secrets / Conduct vendor and model due diligence", audit_finding: "No AI acceptable use or input-data policy existed, confidential IP was exposed to a model provider, and the provider was never assessed." },
+    },
+    audit_evidence_required: [
+      "Inventory of what was pasted (data categories, number of customers, code repositories).",
+      "The AI tool's terms of use and data-retention/training settings.",
+      "Proxy/CASB logs showing use of AI tools across the organisation.",
+      "Existing acceptable use, data classification and vendor management policies.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Block the public AI tool on corporate networks/devices, ask the provider to delete the conversations and opt out of training, and rotate any secrets found in the pasted code.",
+      step_2_leak_and_legal:
+        "Assess the disclosure as a personal-data breach (GDPR Art. 33 within 72h if risky) and check contractual confidentiality duties to customers; document the decision.",
+      step_3_permanent_fix:
+        "Publish an AI acceptable use policy, provide an approved enterprise AI tool with a DPA and no-training terms, add DLP for AI destinations, train staff, and run vendor due diligence on every AI provider.",
     },
   },
 };

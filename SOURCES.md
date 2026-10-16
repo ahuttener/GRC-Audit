@@ -5,7 +5,7 @@ Where the data comes from. GRC Audit does not rely on model memory for control I
 the grounding layer verifies every cited ID against them (the green **"Grounded"** badge). The IDs and
 titles are verified against the official sources below.
 
-> **Free vs paid:** NIST, SOC 2 (AICPA), GDPR, HIPAA and CCPA publish their official text **for free**.
+> **Free vs paid:** NIST, SOC 2 (AICPA), GDPR, HIPAA, CCPA and AIUC-1 publish their official text **for free**.
 > **ISO/IEC 27001 is a paid standard** — there is no free legal download, so the app references only its
 > official control IDs and short titles (factual references), never the standard's text.
 
@@ -17,6 +17,7 @@ titles are verified against the official sources below.
 | GDPR | Reg. (EU) 2016/679 | EUR-Lex (below) | ✅ |
 | HIPAA Security/Breach | 45 CFR Part 164 | eCFR (below) | ✅ |
 | CCPA / CPRA | Cal. Civ. Code 1798.100+ | California OAG / leginfo (below) | ✅ |
+| AIUC-1 — AI agent standard | Q4 2026 (updated 15 Oct 2026) | standard.aiuc-1.com (below) | ✅ |
 
 ## Direct links
 
@@ -47,6 +48,17 @@ titles are verified against the official sources below.
 - California Attorney General (CCPA): https://oag.ca.gov/privacy/ccpa
 - Statute text (leginfo, Civil Code 1798.100 et seq.): https://leginfo.legislature.ca.gov
 - CPRA regulations (CPPA, CCR Title 11): https://cppa.ca.gov/regulations/
+
+### AIUC-1 — AI agent standard (free)
+- Standard home (Artificial Intelligence Underwriting Company): https://www.aiuc-1.com/
+- Requirements by domain: https://standard.aiuc-1.com/ — Data & Privacy (A), Security (B), Safety (C),
+  Reliability (D), Accountability (E), Society (F)
+- Changelog: https://standard.aiuc-1.com/changelog
+- The catalog holds the 50 active requirements (A001–F002) with their official titles and
+  Mandatory/Optional labels. Retired or merged requirements (C011, C012, D002, E007, E014) are left out on
+  purpose, so a citation of them is flagged as unverified.
+- Certification combines an audit of controls with adversarial testing of the agent itself (quarterly
+  third-party testing requirements A009, B001, C010, D004, E018).
 
 ## Honest scope
 - The catalogs cover the controls relevant to incident-to-framework mapping — not a full reproduction of

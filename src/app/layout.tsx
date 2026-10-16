@@ -3,7 +3,7 @@ import "./globals.css";
 
 const SITE = "https://cybersecinfo.com/grcaudit/";
 const DESCRIPTION =
-  "Describe a security incident in plain language and get a grounded multi-framework mapping (NIST CSF 2.0, ISO 27001, SOC 2, GDPR, CCPA/CPRA, HIPAA), audit evidence and a 3-step remediation roadmap.";
+  "Describe a security incident in plain language and get a grounded multi-framework mapping (NIST CSF 2.0, ISO 27001, SOC 2, GDPR, CCPA/CPRA, HIPAA, AIUC-1 for AI agents), audit evidence and a 3-step remediation roadmap.";
 
 export const metadata: Metadata = {
   title: "GRC Audit | CyberSecInfo",
