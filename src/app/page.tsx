@@ -15,6 +15,9 @@ import { verify } from "@/lib/grounding";
 // Static builds run the grounded demo engine in the browser (no backend needed).
 // Set NEXT_PUBLIC_USE_API=1 on a Node/Vercel deploy to use the LLM API route instead.
 const USE_API = process.env.NEXT_PUBLIC_USE_API === "1";
+// Endpoint for LLM mode. On a PHP host (e.g. Hostinger) set this to the PHP endpoint,
+// e.g. NEXT_PUBLIC_API_URL="api/audit-incident.php". Defaults to the Next.js route.
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api/audit-incident";
 
 export default function Page() {
   const [incident, setIncident] = useState("");
@@ -38,7 +41,7 @@ export default function Page() {
     setError(null);
     try {
       if (USE_API) {
-        const res = await fetch("/api/audit-incident", {
+        const res = await fetch(API_URL, {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ incident, archetype }),
@@ -48,7 +51,9 @@ export default function Page() {
           setError(data.error || "Something went wrong.");
           setResp(null);
         } else {
-          setResp(data);
+          // The PHP endpoint returns { source, model, result }; verify client-side.
+          const verification = data.verification ?? verify(data.result);
+          setResp({ source: data.source ?? "llm", model: data.model, verification, result: data.result });
         }
       } else {
         // Client-side grounded demo engine — runs on static hosting, no key, no cost.
