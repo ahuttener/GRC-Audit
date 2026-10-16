@@ -1,0 +1,22 @@
+# GRC Audit — hardening for the /grcaudit folder (Apache / LiteSpeed, e.g. Hostinger)
+
+# No directory listings
+Options -Indexes
+
+# Never expose version-control metadata (e.g. from a Git deployment)
+RedirectMatch 404 /\.(git|github)(/|$)
+
+# Config files must never be served (the key normally lives outside public_html anyway)
+<FilesMatch "^(config|grcaudit-config)(\.sample)?\.php$">
+  Require all denied
+</FilesMatch>
+
+# Security headers
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+ErrorDocument 404 /grcaudit/404.html

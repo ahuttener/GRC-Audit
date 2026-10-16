@@ -1,0 +1,64 @@
+===========================================================
+  GRC AUDIT — Instalação no Hostinger (cybersecinfo.com/grcaudit)
+===========================================================
+
+------------------------------------------------------------
+PASSO 1 — Subir o site (2 min)
+------------------------------------------------------------
+1. hPanel > Websites > cybersecinfo.com > Gerenciador de Arquivos.
+2. Abra a pasta public_html.
+3. Envie (Upload) o arquivo grcaudit-hostinger.zip para dentro de public_html.
+4. Botao direito no ZIP > Extrair (Extract). Isso cria:  public_html/grcaudit/
+5. Abra https://cybersecinfo.com/grcaudit  -> ja funciona (modo demonstracao).
+
+------------------------------------------------------------
+PASSO 2 — Ligar a IA com sua chave da Claude (1 vez so)
+------------------------------------------------------------
+1. Em public_html/grcaudit/api/ existe o modelo:  grcaudit-config.sample.php
+2. Copie esse arquivo para a pasta ACIMA de public_html
+   (no Hostinger normalmente e:  domains/cybersecinfo.com/ )
+   e renomeie a copia para:  grcaudit-config.php
+3. Edite e cole sua chave no lugar de sk-ant-xxxxxxxx-REPLACE-ME. Salve.
+
+   Por que fora do public_html? Assim o arquivo NUNCA pode ser baixado
+   pela internet e nao e apagado quando o site for atualizado.
+   (Se o Gerenciador nao deixar sair do public_html, pode deixar em
+   public_html/grcaudit-config.php — tambem funciona.)
+
+   NUNCA cole a chave em chat, e-mail ou GitHub.
+
+------------------------------------------------------------
+PROTECAO DOS SEUS CREDITOS (ja vem ligada)
+------------------------------------------------------------
+- Ate 150 analises de IA por dia no site todo, e 10 por visitante/hora.
+- Passou do limite? O site mostra o modo demonstracao (gratis) automaticamente.
+- Modelo padrao: claude-haiku-5-5 (rapido e ~20x mais barato).
+  Para analises mais profundas, troque LLM_MODEL para claude-sonnet-5-5
+  no grcaudit-config.php (e de preferencia baixe o DAILY_LIMIT).
+- So paginas do cybersecinfo.com podem chamar a IA pelo navegador.
+
+------------------------------------------------------------
+PASSO 3 — Link no menu do site
+------------------------------------------------------------
+No cybersecinfo.com/home, ao lado do link "Editor PDF", adicione:
+
+   <a href="https://cybersecinfo.com/grcaudit/">GRC Audit</a>
+
+------------------------------------------------------------
+Se a IA nao responder
+------------------------------------------------------------
+- O site continua funcionando (modo demonstracao).
+- Veja o log de erros do PHP no hPanel: as linhas comecam com [grcaudit].
+
+===========================================================
+Estrutura criada pelo ZIP:
+
+  grcaudit/
+  ├── index.html, _next/, 404.html   (o site)
+  ├── .htaccess                      (seguranca: sem listagem, headers)
+  └── api/
+      ├── audit-incident.php         (endpoint da IA)
+      ├── audit-schema.json          (formato oficial da resposta)
+      ├── grcaudit-config.sample.php (modelo da configuracao)
+      └── frameworks/                (as 6 tabelas oficiais em JSON)
+===========================================================

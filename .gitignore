@@ -25,9 +25,13 @@ yarn-error.log*
 .env.local
 .env*.local
 php/config.php
+grcaudit-config.php
 
 # typescript
 *.tsbuildinfo
 
 # static-export helper
 .api-bak/
+
+# Hostinger bundle output
+/dist-hostinger/

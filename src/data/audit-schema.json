@@ -1,0 +1,116 @@
+{
+  "type": "object",
+  "properties": {
+    "incident_title": { "type": "string" },
+    "incident_summary": { "type": "string" },
+    "severity_level": { "type": "string", "enum": ["Low", "Medium", "High", "Critical"] },
+    "failure_category": {
+      "type": "string",
+      "enum": [
+        "Identity & Access Management",
+        "Data Leakage",
+        "Cloud Misconfiguration",
+        "Third-Party Risk",
+        "Endpoint Security"
+      ]
+    },
+    "recommended_strategy": {
+      "type": "object",
+      "properties": {
+        "strategy": { "type": "string", "enum": ["MITIGATE", "AVOID", "TRANSFER", "ACCEPT"] },
+        "rationale": { "type": "string" }
+      },
+      "required": ["strategy", "rationale"],
+      "additionalProperties": false
+    },
+    "grounded_frameworks": {
+      "type": "object",
+      "properties": {
+        "iso_27001_2022": {
+          "type": "object",
+          "properties": {
+            "control_id": { "type": "string" },
+            "control_name": { "type": "string" },
+            "category": { "type": "string" },
+            "audit_finding": { "type": "string" }
+          },
+          "required": ["control_id", "control_name", "category", "audit_finding"],
+          "additionalProperties": false
+        },
+        "soc_2": {
+          "type": "object",
+          "properties": {
+            "criteria": { "type": "string" },
+            "name": { "type": "string" },
+            "audit_finding": { "type": "string" }
+          },
+          "required": ["criteria", "name", "audit_finding"],
+          "additionalProperties": false
+        },
+        "gdpr": {
+          "type": "object",
+          "properties": {
+            "article": { "type": "string" },
+            "name": { "type": "string" },
+            "regulatory_risk": { "type": "string" }
+          },
+          "required": ["article", "name", "regulatory_risk"],
+          "additionalProperties": false
+        },
+        "ccpa_cpra": {
+          "type": "object",
+          "properties": {
+            "section": { "type": "string" },
+            "name": { "type": "string" },
+            "regulatory_risk": { "type": "string" }
+          },
+          "required": ["section", "name", "regulatory_risk"],
+          "additionalProperties": false
+        },
+        "hipaa": {
+          "type": "object",
+          "properties": {
+            "rule": { "type": "string" },
+            "name": { "type": "string" },
+            "regulatory_risk": { "type": "string" }
+          },
+          "required": ["rule", "name", "regulatory_risk"],
+          "additionalProperties": false
+        },
+        "nist_csf_2": {
+          "type": "object",
+          "properties": {
+            "subcategories": { "type": "string" },
+            "function_name": { "type": "string" }
+          },
+          "required": ["subcategories", "function_name"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["iso_27001_2022", "soc_2", "gdpr", "ccpa_cpra", "hipaa", "nist_csf_2"],
+      "additionalProperties": false
+    },
+    "audit_evidence_required": { "type": "array", "items": { "type": "string" } },
+    "remediation_plan": {
+      "type": "object",
+      "properties": {
+        "step_1_containment": { "type": "string" },
+        "step_2_leak_and_legal": { "type": "string" },
+        "step_3_permanent_fix": { "type": "string" }
+      },
+      "required": ["step_1_containment", "step_2_leak_and_legal", "step_3_permanent_fix"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "incident_title",
+    "incident_summary",
+    "severity_level",
+    "failure_category",
+    "recommended_strategy",
+    "grounded_frameworks",
+    "audit_evidence_required",
+    "remediation_plan"
+  ],
+  "additionalProperties": false
+}

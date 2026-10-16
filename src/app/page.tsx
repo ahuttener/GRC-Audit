@@ -36,31 +36,42 @@ export default function Page() {
     setArchetype(undefined); // manual edits drop the scenario hint
   };
 
+  const runDemo = () => {
+    // Client-side grounded demo engine — runs on static hosting, no key, no cost.
+    const result = analyzeLocally(incident, archetype);
+    setResp({ source: "demo", verification: verify(result), result });
+  };
+
   const submit = async () => {
     setLoading(true);
     setError(null);
     try {
       if (USE_API) {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ incident, archetype }),
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          setError(data.error || "Something went wrong.");
-          setResp(null);
-        } else {
-          // The PHP endpoint returns { source, model, result }; verify client-side.
-          const verification = data.verification ?? verify(data.result);
-          setResp({ source: data.source ?? "llm", model: data.model, verification, result: data.result });
+        try {
+          const res = await fetch(API_URL, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ incident, archetype }),
+          });
+          const data = await res.json().catch(() => null);
+          if (res.ok && data?.result) {
+            // The PHP endpoint returns { source, model, result }; verify client-side.
+            const verification = data.verification ?? verify(data.result);
+            setResp({ source: data.source ?? "llm", model: data.model, verification, result: data.result });
+            return;
+          }
+          if (res.status === 400 && data?.error) {
+            // Input problem (too short / too long): tell the user instead of guessing.
+            setError(data.error);
+            setResp(null);
+            return;
+          }
+          // AI not configured, rate-limited or temporarily down → use the demo engine.
+        } catch {
+          // Network error → use the demo engine.
         }
-      } else {
-        // Client-side grounded demo engine — runs on static hosting, no key, no cost.
-        const result = analyzeLocally(incident, archetype);
-        const verification = verify(result);
-        setResp({ source: "demo", verification, result });
       }
+      runDemo();
     } catch {
       setError("Something went wrong analyzing the incident. Please try again.");
     } finally {

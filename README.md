@@ -68,7 +68,7 @@ npm run dev                     # http://localhost:3000
 # Optional. Without a key, the app runs in demo mode.
 ANTHROPIC_API_KEY=sk-ant-...        # Claude (used if set)
 # OPENAI_API_KEY=sk-...             # OpenAI (alternative)
-# LLM_MODEL=claude-sonnet-5-5       # or e.g. gpt-4o-mini
+# LLM_MODEL=claude-haiku-5-5        # default; or claude-sonnet-5-5 / gpt-4o-mini
 ```
 
 > **Note:** an Anthropic **API key** (console.anthropic.com, pay-as-you-go) is separate from a

@@ -14,6 +14,8 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   explain why in its finding/risk field. Never invent an ID to fill a slot.
 - Choose the primary ISO 31000 / NIST risk-treatment strategy (MITIGATE, AVOID, TRANSFER or ACCEPT)
   with a one-line rationale; most live incidents are MITIGATE.
+- Write every free-text field in the same language as the incident description (e.g. Portuguese in,
+  Portuguese out). Keep control IDs, article numbers and official control names exactly as in the CONTEXT.
 
 Return ONLY a single valid JSON object (no markdown, no prose outside the JSON) with EXACTLY this shape:
 
