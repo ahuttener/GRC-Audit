@@ -105,8 +105,13 @@ function matches(cited: string, key: string): boolean {
 }
 
 function splitIds(raw: string): string[] {
-  return raw
-    .split(/[,;&/]| and /i)
+  const r = raw.trim();
+  // A whole field of "N/A" / "not applicable" is not a citation.
+  if (!r || r.toLowerCase() === "n/a" || r.toLowerCase().includes("not applicable")) {
+    return [];
+  }
+  return r
+    .split(/[,;&]| and /i) // do NOT split on "/", so "N/A" stays intact
     .map((s) => s.trim())
     .filter(Boolean);
 }
