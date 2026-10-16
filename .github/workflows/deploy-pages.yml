@@ -23,6 +23,8 @@ jobs:
         with:
           node-version: 20
       - run: npm install
+      - name: Unit tests (grounding verifier + rate limiter)
+        run: npm test
       - name: Build static site (demo engine, client-side)
         run: STATIC_EXPORT=1 BASE_PATH=/GRC-Audit bash scripts/build-static.sh
       - uses: actions/configure-pages@v5

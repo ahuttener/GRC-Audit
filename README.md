@@ -48,6 +48,10 @@ On every request the engine:
    prompt in `src/lib/prompt.ts`).
 3. **Verifies** every cited ID against the catalogs after generation (`verify()`), and the
    UI shows a green *"Grounded — N control IDs verified"* badge (or flags any unverified ID).
+   Matching is strict: an ID must exist as-is, as a finer sub-reference (`Art. 5(1)(f)` → `Art. 5`,
+   `1798.100(e)` → `1798.100`) or inside a catalog range (`Art. 17` → `Art. 15-22`). Look-alikes
+   such as `Art. 3` vs `Art. 32`, `Art. 50` vs `Art. 5` or `A.5.1` vs `A.5.18` are rejected — this is
+   covered by the test suite.
 
 The built-in **demo engine** draws its IDs straight from the catalogs, so it is always 100% grounded.
 
@@ -93,6 +97,15 @@ Returns `{ source, model?, verification, result }`, where `result` matches
 `failure_category`, `grounded_frameworks` (the six framework objects), `audit_evidence_required`,
 and `remediation_plan` (three steps).
 
+## Tests
+
+```bash
+npm test      # Vitest
+```
+
+The suite covers the grounding verifier (real IDs accepted, look-alike IDs rejected, every demo
+scenario fully grounded) and the API rate limiter. CI runs it before every GitHub Pages deploy.
+
 ## Project structure
 
 ```
@@ -106,24 +119,36 @@ src/
     frameworks/*.json            embedded official catalogs (grounding source)
     scenarios.ts                 the 4 quick-test scenarios
   lib/
-    grounding.ts                 retrieve + verify against catalogs
+    grounding.ts                 retrieve + verify against catalogs (+ grounding.test.ts)
+    rateLimit.ts                 credit protection for the API route (+ rateLimit.test.ts)
     prompt.ts / llm.ts           grounded prompt + Anthropic/OpenAI call
     analyzer.ts                  local demo engine (grounded)
     toMarkdown.ts                export
   types/grc.ts                   response schema
+php/
+  audit-incident.php             AI endpoint for PHP hosts (Hostinger)
 ```
 
 ## Deploy
 
-- **Vercel (recommended, free):** import the repo, add `ANTHROPIC_API_KEY` as an environment
-  variable, deploy, then point a subdomain (e.g. `grc-audit.cybersecinfo.com`) at it.
-- **Node host (e.g. Hostinger Node.js app):** `npm run build && npm run start` behind the
-  subdomain. Next.js needs a Node runtime — this is not a static upload.
+- **cybersecinfo.com/grcaudit (Hostinger, PHP — no Node needed):** `bash scripts/package-hostinger.sh`
+  builds the static site plus `api/audit-incident.php`, which calls Claude with structured outputs,
+  accepts calls only from the site's own origin, and caps usage at 10 analyses per visitor per hour
+  and 150 per day. The key lives in `grcaudit-config.php` **outside** `public_html`. Steps:
+  [`hosting/COMO-INSTALAR.txt`](hosting/COMO-INSTALAR.txt).
+- **GitHub Pages (demo engine):** every push to `main` runs the tests and publishes
+  [ahuttener.github.io/GRC-Audit](https://ahuttener.github.io/GRC-Audit/).
+- **Node / Vercel (optional):** `npm run build && npm run start` with `ANTHROPIC_API_KEY` set; the
+  Next.js route applies the same limits (`AI_PER_IP_HOURLY`, `AI_DAILY_LIMIT`).
 
 ## Disclaimer
 
 Educational / portfolio project. Automated output is an indicator to support an assessor, not a
 certification or legal advice. Confirm every finding and notification deadline against the
 primary source and qualified counsel.
+
+## License
+
+[MIT](LICENSE)
 
 Built by **Adriano Huttener** — MSc Cybersecurity (National College of Ireland) · [CyberSecInfo](https://cybersecinfo.com)

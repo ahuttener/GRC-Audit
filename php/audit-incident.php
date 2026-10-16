@@ -95,6 +95,9 @@ function bump_counter(string $file, int $limit): bool
 
 $cfg            = load_config();
 $apiKey         = (string) ($cfg['ANTHROPIC_API_KEY'] ?? '');
+if ($apiKey !== '' && strncmp($apiKey, 'sk-', 3) !== 0) {
+    $apiKey = ''; // a placeholder is still in the config (e.g. COLE_A_CHAVE_AQUI) → treat as not configured
+}
 $model          = (string) ($cfg['LLM_MODEL'] ?? 'claude-haiku-5-5');
 $dailyLimit     = (int) ($cfg['DAILY_LIMIT'] ?? 150);
 $perIpHourly    = (int) ($cfg['PER_IP_HOURLY'] ?? 10);

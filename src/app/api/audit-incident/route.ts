@@ -2,10 +2,15 @@ import { NextResponse } from "next/server";
 import { retrieveContext, verify } from "@/lib/grounding";
 import { analyzeWithLLM, hasLLMKey } from "@/lib/llm";
 import { analyzeLocally } from "@/lib/analyzer";
+import { clientIp, createLimiter, limitsFromEnv } from "@/lib/rateLimit";
 import type { AuditResponse } from "@/types/grc";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+// Protects the API credits: 10 AI analyses per visitor per hour and 150 per day by default
+// (AI_PER_IP_HOURLY / AI_DAILY_LIMIT). Over the limit, the route answers with the demo engine.
+const allowAiCall = createLimiter(limitsFromEnv());
 
 export async function POST(req: Request) {
   let body: { incident?: unknown; archetype?: unknown };
@@ -33,7 +38,7 @@ export async function POST(req: Request) {
 
   // Prefer the LLM when a key is configured; fall back to the grounded demo engine
   // on any error so the app always returns a useful, verifiable result.
-  if (hasLLMKey()) {
+  if (hasLLMKey() && allowAiCall(clientIp(req.headers))) {
     try {
       const { model, result } = await analyzeWithLLM(incident, context);
       if (!result.recommended_strategy) {
