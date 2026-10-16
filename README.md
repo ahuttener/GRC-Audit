@@ -4,6 +4,10 @@
 
 **▶ Live:** [cybersecinfo.com/grcaudit](https://cybersecinfo.com/grcaudit/) · mirror on [GitHub Pages](https://ahuttener.github.io/GRC-Audit/)
 
+**Companion project:** [Identity Governance Audit Framework](https://github.com/ahuttener/identity-governance-audit-framework),
+a full simulated audit engagement (SOC 2 Type 2 integrated with an ISO/IEC 27001 surveillance audit): risk assessment,
+control testing workpapers, findings and remediation.
+
 **Describe a security incident in plain language. Get an auditor-grade, framework-mapped
 diagnosis — with control IDs verified against official catalogs, not hallucinated.**
 

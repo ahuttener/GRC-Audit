@@ -8,6 +8,7 @@ import ResultView from "@/components/ResultView";
 import GrcPrinciples from "@/components/GrcPrinciples";
 import RiskTreatmentCard from "@/components/RiskTreatmentCard";
 import Sources from "@/components/Sources";
+import CompanionProject from "@/components/CompanionProject";
 import type { AuditResponse } from "@/types/grc";
 import { analyzeLocally } from "@/lib/analyzer";
 import { verify } from "@/lib/grounding";
@@ -133,6 +134,7 @@ export default function Page() {
             embedded official catalogs so control IDs are verified, not hallucinated — then lists the
             audit evidence an assessor will request and builds a 3-step remediation plan.
           </p>
+          <CompanionProject />
         </section>
 
         <GrcPrinciples />
