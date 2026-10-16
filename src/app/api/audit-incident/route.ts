@@ -36,6 +36,9 @@ export async function POST(req: Request) {
   if (hasLLMKey()) {
     try {
       const { model, result } = await analyzeWithLLM(incident, context);
+      if (!result.recommended_strategy) {
+        result.recommended_strategy = { strategy: "MITIGATE", rationale: "" };
+      }
       const verification = verify(result);
       const resp: AuditResponse = { source: "llm", model, verification, result };
       return NextResponse.json(resp);

@@ -9,6 +9,14 @@ export type FailureCategory =
   | "Third-Party Risk"
   | "Endpoint Security";
 
+export type RiskStrategy = "MITIGATE" | "AVOID" | "TRANSFER" | "ACCEPT";
+
+export interface RecommendedStrategy {
+  strategy: RiskStrategy;
+  /** Short rationale, e.g. "via automated SCIM deprovisioning". */
+  rationale: string;
+}
+
 export interface IsoMapping {
   control_id: string;
   control_name: string;
@@ -60,6 +68,8 @@ export interface AuditResult {
   incident_summary: string;
   severity_level: SeverityLevel;
   failure_category: FailureCategory;
+  /** Recommended ISO 31000 / NIST risk-treatment strategy. */
+  recommended_strategy: RecommendedStrategy;
   grounded_frameworks: GroundedFrameworks;
   audit_evidence_required: string[];
   remediation_plan: RemediationPlan;

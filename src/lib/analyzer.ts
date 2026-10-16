@@ -42,6 +42,7 @@ export function classify(incident: string): Archetype {
 const CURATED: Record<Exclude<Archetype, "generic">, AuditResult> = {
   "zombie-account": {
     incident_title: "Orphaned (Zombie) Account — Terminated Employee Retains Access",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via automated SCIM deprovisioning and quarterly access recertification" },
     incident_summary:
       "A terminated employee retained active Google Workspace and CRM credentials for roughly three months, caught by a quarterly access review — a failure of leaver deprovisioning.",
     severity_level: "High",
@@ -74,6 +75,7 @@ const CURATED: Record<Exclude<Archetype, "generic">, AuditResult> = {
 
   "secret-exposure": {
     incident_title: "Public Exposure of Production Secrets & AWS Root Key",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via a secrets manager, immediate key rotation and push-protection; TRANSFER residual breach cost via cyber insurance" },
     incident_summary:
       "Production database credentials and an AWS root secret key were committed to a public GitHub repository and exposed for 48 hours — a critical, potentially account-wide compromise.",
     severity_level: "Critical",
@@ -105,6 +107,7 @@ const CURATED: Record<Exclude<Archetype, "generic">, AuditResult> = {
 
   "data-leak": {
     incident_title: "Insider Exfiltration of Customer PII to a Personal Inbox",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via DLP and least privilege; TRANSFER residual liability via cyber insurance" },
     incident_summary:
       "A support agent emailed an unencrypted spreadsheet of 5,000 EU and California customers (names, emails, card expiration dates) to a personal inbox — a confirmed cross-border personal-data breach.",
     severity_level: "Critical",
@@ -136,6 +139,7 @@ const CURATED: Record<Exclude<Archetype, "generic">, AuditResult> = {
 
   "missing-mfa": {
     incident_title: "Privileged Production Accounts Without MFA",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via enforced MFA and federated SSO with least privilege" },
     incident_summary:
       "An internal audit found 12 engineering accounts with administrative access to production AWS that are not protected by MFA — a high-risk strong-authentication gap on privileged access.",
     severity_level: "High",
@@ -167,6 +171,7 @@ const CURATED: Record<Exclude<Archetype, "generic">, AuditResult> = {
 
   ransomware: {
     incident_title: "Ransomware Reached the Backup Server",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via immutable offline backups and network segmentation; TRANSFER residual cost via cyber insurance" },
     incident_summary:
       "Ransomware compromised backup infrastructure, threatening recovery capability — a critical availability-and-integrity incident with potential data-breach implications.",
     severity_level: "Critical",
@@ -200,6 +205,7 @@ function generic(incident: string): AuditResult {
   const snippet = incident.trim().replace(/\s+/g, " ").slice(0, 160);
   return {
     incident_title: "Security / Compliance Finding",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via control implementation; re-evaluate AVOID / TRANSFER / ACCEPT against your risk appetite" },
     incident_summary:
       `The reported condition was analyzed against common control objectives. "${snippet}${incident.length > 160 ? "…" : ""}" Confirm severity and scope against your environment.`,
     severity_level: "Medium" as SeverityLevel,

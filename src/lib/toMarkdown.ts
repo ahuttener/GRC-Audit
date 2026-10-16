@@ -16,6 +16,9 @@ export function toMarkdown(resp: AuditResponse): string {
   L.push(
     `**Grounding:** ${resp.verification.grounded ? "All cited control IDs verified against local catalogs ✓" : `${resp.verification.unverified.length} unverified ID(s)`}`
   );
+  L.push(
+    `**Recommended strategy:** ${r.recommended_strategy?.strategy ?? "MITIGATE"} — ${r.recommended_strategy?.rationale ?? ""}`
+  );
   L.push("");
   L.push(`## Executive summary`);
   L.push(r.incident_summary);

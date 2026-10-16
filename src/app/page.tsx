@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import IncidentConsole from "@/components/IncidentConsole";
 import ResultView from "@/components/ResultView";
 import GrcPrinciples from "@/components/GrcPrinciples";
+import RiskTreatmentCard from "@/components/RiskTreatmentCard";
 import type { AuditResponse } from "@/types/grc";
 
 export default function Page() {
@@ -66,6 +67,8 @@ export default function Page() {
         </section>
 
         <GrcPrinciples />
+
+        <RiskTreatmentCard />
 
         <IncidentConsole
           value={incident}
