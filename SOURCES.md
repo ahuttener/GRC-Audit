@@ -1,28 +1,55 @@
-# Official sources & grounding
+# GRC Audit — Official framework sources & downloads
 
-GRC Audit does not rely on model memory for control identifiers. Each framework catalog in
-[`src/data/frameworks/`](src/data/frameworks/) carries the official control IDs and titles, and the
-grounding layer ([`src/lib/grounding.ts`](src/lib/grounding.ts)) verifies that every ID the tool
-cites exists in those catalogs before showing the green **"Grounded"** badge.
+Where the data comes from. GRC Audit does not rely on model memory for control IDs: each catalog in
+[`src/data/frameworks/`](src/data/frameworks/) holds the official control identifiers and titles, and
+the grounding layer verifies every cited ID against them (the green **"Grounded"** badge). The IDs and
+titles are verified against the official sources below.
 
-The control IDs and titles are **verified against the official sources below**. For paid/copyrighted
-standards (ISO/IEC 27001, SOC 2) only the **official identifier and short title** are referenced —
-factual references — and the standards' text is **not** reproduced.
+> **Free vs paid:** NIST, SOC 2 (AICPA), GDPR, HIPAA and CCPA publish their official text **for free**.
+> **ISO/IEC 27001 is a paid standard** — there is no free legal download, so the app references only its
+> official control IDs and short titles (factual references), never the standard's text.
 
-| Framework | Version | Official source |
-|---|---|---|
-| NIST Cybersecurity Framework | 2.0 (CSWP 29) | https://doi.org/10.6028/NIST.CSWP.29 · https://www.nist.gov/cyberframework |
-| ISO/IEC 27001 Annex A | 2022 | https://www.iso.org/standard/27001 (paid standard) |
-| SOC 2 — Trust Services Criteria | 2017 / rev. 2022 | https://www.aicpa-cima.com/resources/landing/trust-services-criteria (AICPA) |
-| GDPR | Reg. (EU) 2016/679 | https://eur-lex.europa.eu/eli/reg/2016/679/oj |
-| CCPA / CPRA | Cal. Civ. Code 1798.100+ | https://oag.ca.gov/privacy/ccpa · https://leginfo.legislature.ca.gov |
-| HIPAA Security/Breach Rules | 45 CFR Part 164 | https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164 |
+| Framework | Version | Official download / text | Free? |
+|---|---|---|---|
+| NIST CSF 2.0 | 2.0 (2024) | PDF + Reference Tool (below) | ✅ |
+| ISO/IEC 27001 Annex A | 2022 | Purchase only (below) | ❌ paid |
+| SOC 2 — Trust Services Criteria | 2017 / rev. 2022 | AICPA PDF (below) | ✅ |
+| GDPR | Reg. (EU) 2016/679 | EUR-Lex (below) | ✅ |
+| HIPAA Security/Breach | 45 CFR Part 164 | eCFR (below) | ✅ |
+| CCPA / CPRA | Cal. Civ. Code 1798.100+ | California OAG / leginfo (below) | ✅ |
+
+## Direct links
+
+### NIST Cybersecurity Framework 2.0 (free)
+- Publication: https://csrc.nist.gov/pubs/cswp/29/the-nist-cybersecurity-framework-csf-20/final
+- Official PDF: https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf
+- CSF 2.0 Reference Tool (export the Core as JSON/Excel): https://csrc.nist.gov/projects/cybersecurity-framework
+- Framework home: https://www.nist.gov/cyberframework
+
+### ISO/IEC 27001:2022 — Annex A (paid)
+- Standard (purchase): https://www.iso.org/standard/27001
+- Note: paid/copyrighted. The 93 Annex A control IDs and short titles are public references and are what
+  this app uses; the full control text requires buying the standard.
+
+### SOC 2 — AICPA Trust Services Criteria (free)
+- Official PDF (2017 criteria with 2022 revised points of focus):
+  https://www.aicpa-cima.com/resources/download/2017-trust-services-criteria-with-revised-points-of-focus-2022
+
+### GDPR — Regulation (EU) 2016/679 (free)
+- Official text (EUR-Lex, HTML): https://eur-lex.europa.eu/eli/reg/2016/679/oj
+- Official PDF (EUR-Lex): https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32016R0679
+
+### HIPAA — 45 CFR Part 164 (free)
+- eCFR (always-current official text): https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164
+- HHS Security Rule hub: https://www.hhs.gov/hipaa/for-professionals/security/index.html
+
+### CCPA / CPRA — California (free)
+- California Attorney General (CCPA): https://oag.ca.gov/privacy/ccpa
+- Statute text (leginfo, Civil Code 1798.100 et seq.): https://leginfo.legislature.ca.gov
+- CPRA regulations (CPPA, CCR Title 11): https://cppa.ca.gov/regulations/
 
 ## Honest scope
-
-- The catalogs cover the controls relevant to incident-to-framework mapping. They are not a full
-  reproduction of each standard — the official source above is the complete, authoritative text.
-- Verified spot-checks include, e.g., NIST CSF 2.0 `PR.AA-01` ("Identities and credentials for
-  authorized users, services, and hardware are managed") and GDPR `Art. 32/33/34`.
-- Automated output is an indicator to support a qualified assessor, not a certification or legal
-  advice. Always confirm a finding and any notification deadline against the primary source.
+- The catalogs cover the controls relevant to incident-to-framework mapping — not a full reproduction of
+  each standard. The official source above is the complete, authoritative text.
+- Automated output is an indicator to support a qualified assessor, not a certification or legal advice.
+  Always confirm a finding and any notification deadline against the primary source.
