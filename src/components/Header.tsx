@@ -6,6 +6,19 @@ import { FileText, Github, ShieldCheck, type LucideIcon } from "lucide-react";
 // Same top bar as cybersecinfo.com, so GRC Audit reads as part of the site.
 // Absolute URLs keep every link working on both cybersecinfo.com/grcaudit and GitHub Pages.
 const HOME = "https://cybersecinfo.com/";
+
+// The site's logo.png is a 3375×4219 canvas with the wordmark at x 427–3036, y 1292–1915.
+// Show just that box (36 px tall), the same crop the main site's header ends up with.
+const LOGO = { w: 3375, h: 4219, x: 427, y: 1292, boxW: 2609, boxH: 623 };
+const LOGO_H = 36;
+const S = LOGO_H / LOGO.boxH;
+const LOGO_BOX = { width: Math.round(LOGO.boxW * S), height: LOGO_H };
+const LOGO_IMG = {
+  width: Math.round(LOGO.w * S),
+  height: Math.round(LOGO.h * S),
+  left: -Math.round(LOGO.x * S),
+  top: -Math.round(LOGO.y * S),
+};
 const NAV: { label: string; href: string; icon?: LucideIcon; active?: boolean }[] = [
   { label: "GitHub", href: "https://github.com/ahuttener", icon: Github },
   { label: "GRC Audit", href: `${HOME}grcaudit/`, icon: ShieldCheck, active: true },
@@ -34,15 +47,18 @@ export default function Header() {
               Cyber<span className="text-accent">SecInfo</span>
             </span>
           ) : (
-            // The live CyberSecInfo wordmark; falls back to text if it can't load.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              ref={logoRef}
-              src={`${HOME}img/logo.png`}
-              alt="CyberSecInfo — Information Security"
-              className="h-10 w-auto"
-              onError={() => setLogoFailed(true)}
-            />
+            <span className="relative block overflow-hidden" style={LOGO_BOX}>
+              {/* The live CyberSecInfo wordmark; falls back to text if it can't load. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                ref={logoRef}
+                src={`${HOME}img/logo.png`}
+                alt="CyberSecInfo — Information Security"
+                className="absolute max-w-none"
+                style={LOGO_IMG}
+                onError={() => setLogoFailed(true)}
+              />
+            </span>
           )}
         </a>
         <nav aria-label="CyberSecInfo" className="no-scrollbar -mx-2 w-full overflow-x-auto lg:mx-0 lg:w-auto">
