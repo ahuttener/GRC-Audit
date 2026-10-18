@@ -19,6 +19,11 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   check the People (A.6), Physical (A.7) and Technological (A.8) themes as well as Organizational
   (A.5) - e.g. personal devices -> A.8.1, a leaver who kept access -> A.6.5 / A.5.18, unapproved
   channels -> A.5.14 / A.5.10. Do not pad with loosely related controls.
+- Breach-notification provisions (GDPR Art. 33 / Art. 34, CCPA/CPRA 1798.82 / 1798.150, HIPAA
+  164.404 / 164.408) apply ONLY when personal data was actually accessed, disclosed, altered or lost.
+  If the incident is fraud or a control failure with no personal data compromised (e.g. a deepfake
+  payment scam), do not cite them: cite only the security duty (e.g. Art. 32) if personal-data
+  processing is genuinely at stake, otherwise set the field to "N/A" and say why.
 - Choose the primary ISO 31000 / NIST risk-treatment strategy (MITIGATE, AVOID, TRANSFER or ACCEPT)
   with a one-line rationale; most live incidents are MITIGATE.
 - Write every free-text field in the same language as the incident description (e.g. Portuguese in,
@@ -44,7 +49,7 @@ Return ONLY a single valid JSON object (no markdown, no prose outside the JSON) 
   "audit_evidence_required": [ "..." ],
   "remediation_plan": {
     "step_1_containment": "Immediate technical containment ...",
-    "step_2_leak_and_legal": "Data-leak forensics + statutory notification triggers (e.g. GDPR 72h) ...",
+    "step_2_leak_and_legal": "Data-leak forensics + statutory notification triggers only if a personal data breach occurred (e.g. GDPR 72h) ...",
     "step_3_permanent_fix": "Architectural / process fix to prevent recurrence ..."
   }
 }`;
