@@ -211,6 +211,8 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   If the incident is fraud or a control failure with no personal data compromised (e.g. a deepfake
   payment scam), do not cite them: cite only the security duty (e.g. Art. 32) if personal-data
   processing is genuinely at stake, otherwise set the field to "N/A" and say why.
+- Use the failure_category "Business Continuity & Resilience" for outages, failed or untested backups, disaster recovery
+  and availability failures where no attacker is the root cause.
 - Choose the primary ISO 31000 / NIST risk-treatment strategy (MITIGATE, AVOID, TRANSFER, ACCEPT)
   with a one-line rationale; most live incidents are MITIGATE.
 - Write every free-text field in the same language as the incident description. Keep control IDs,

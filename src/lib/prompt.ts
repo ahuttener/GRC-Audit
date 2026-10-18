@@ -24,6 +24,8 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   If the incident is fraud or a control failure with no personal data compromised (e.g. a deepfake
   payment scam), do not cite them: cite only the security duty (e.g. Art. 32) if personal-data
   processing is genuinely at stake, otherwise set the field to "N/A" and say why.
+- Use the failure_category "Business Continuity & Resilience" for outages, failed or untested backups, disaster recovery
+  and availability failures where no attacker is the root cause.
 - Choose the primary ISO 31000 / NIST risk-treatment strategy (MITIGATE, AVOID, TRANSFER or ACCEPT)
   with a one-line rationale; most live incidents are MITIGATE.
 - Write every free-text field in the same language as the incident description (e.g. Portuguese in,
@@ -35,7 +37,7 @@ Return ONLY a single valid JSON object (no markdown, no prose outside the JSON) 
   "incident_title": "Concise headline of the security/audit issue",
   "incident_summary": "1-2 sentence executive briefing explaining the exposure",
   "severity_level": "Low" | "Medium" | "High" | "Critical",
-  "failure_category": "Identity & Access Management" | "Data Leakage" | "Cloud Misconfiguration" | "Third-Party Risk" | "Endpoint Security" | "Vulnerability Management" | "Governance & Compliance",
+  "failure_category": "Identity & Access Management" | "Data Leakage" | "Cloud Misconfiguration" | "Third-Party Risk" | "Endpoint Security" | "Vulnerability Management" | "Governance & Compliance" | "Business Continuity & Resilience",
   "recommended_strategy": { "strategy": "MITIGATE" | "AVOID" | "TRANSFER" | "ACCEPT", "rationale": "one line, e.g. 'via automated SCIM deprovisioning'" },
   "grounded_frameworks": {
     "iso_27001_2022": { "control_id": "A.8.1 & A.6.5", "control_name": "...", "category": "People / Organizational / Physical / Technological", "audit_finding": "..." },

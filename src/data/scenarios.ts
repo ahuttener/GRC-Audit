@@ -10,14 +10,14 @@ export interface Scenario {
     | "user-x" | "key-round" | "mail-warning" | "shield-off" | "database-backup" | "fish"
     | "handshake" | "laptop" | "cloud-off" | "timer-off" | "file-question" | "eye-off"
     | "bug" | "git-pull-request" | "syringe" | "trash" | "message-warning" | "brain"
-    | "crown" | "clipboard-x" | "bot" | "split";
+    | "crown" | "clipboard-x" | "bot" | "split" | "server-crash";
   archetype:
     | "zombie-account" | "secret-exposure" | "data-leak" | "missing-mfa" | "ransomware"
     | "phishing-bec" | "vendor-breach" | "lost-device-phi" | "public-bucket"
     | "late-notification" | "dsar-ignored" | "missing-logs" | "unpatched-vpn"
     | "unapproved-change" | "prompt-injection" | "agent-unauthorized-action" | "ai-hallucination"
     | "shadow-ai" | "privileged-access" | "access-review-failure" | "non-human-identity"
-    | "sod-conflict";
+    | "sod-conflict" | "backup-dr-failure";
   description: string;
 }
 
@@ -221,5 +221,14 @@ export const SCENARIOS: Scenario[] = [
     archetype: "sod-conflict",
     description:
       "An accounts payable clerk transferred to the treasury team kept their old ERP role after the role change. The combined access let them create a new payee and approve payments to it — a segregation of duties conflict (toxic combination) that went unnoticed for five months.",
+  },
+  {
+    id: "backup-dr-failure",
+    title: "Silent Backup Failure & Untested Disaster Recovery",
+    badge: "Business Continuity",
+    icon: "server-crash",
+    archetype: "backup-dr-failure",
+    description:
+      "During a power failure at its data centre, a payroll provider found that its database backups had not completed for six weeks because the backup storage was full and no alert was configured. The disaster recovery plan had never been tested and had no RTO or RPO targets, so payroll ran three days late while engineers rebuilt the database from older copies.",
   },
 ];

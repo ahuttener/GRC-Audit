@@ -95,7 +95,7 @@ ANTHROPIC_API_KEY=sk-ant-...        # Claude (used if set)
 
 One-click pills load realistic audit findings: **Zombie Account**, **Public API Key & Secret
 Exposure**, **Customer Data Leak via Unencrypted Channel**, **Missing MFA on Cloud Infrastructure**,
-and 18 more across vulnerability management, governance and AI.
+and 19 more across vulnerability management, governance, business continuity and AI.
 
 Four **identity governance** scenarios — standing privileged access and break-glass, a rubber-stamped
 quarterly access review, an ownerless service account, and a segregation-of-duties conflict after a
@@ -129,7 +129,7 @@ src/
                                  FrameworkMatrix, EvidenceCard, RemediationRoadmap, …
   data/
     frameworks/*.json            embedded official catalogs (grounding source)
-    scenarios.ts                 the 22 quick-test scenarios
+    scenarios.ts                 the 23 quick-test scenarios
   lib/
     grounding.ts                 retrieve + verify against catalogs (+ grounding.test.ts)
     rateLimit.ts                 credit protection for the API route (+ rateLimit.test.ts)

@@ -27,6 +27,7 @@ type Archetype =
   | "access-review-failure"
   | "non-human-identity"
   | "sod-conflict"
+  | "backup-dr-failure"
   | "generic";
 
 // Bilingual (EN + PT-BR) keyword hints so typed incidents classify in demo mode.
@@ -97,6 +98,9 @@ const KEYWORDS: Record<Exclude<Archetype, "generic">, string[]> = {
     "api token", "deploy key", "never been rotated", "never rotated", "interactive login", "no registered owner"],
   "sod-conflict": ["segregation of duties", "separation of duties", "toxic combination", "conflicting duties",
     "role change", "transferred", "approve payments", "create a new payee", "sod conflict"],
+  "backup-dr-failure": ["disaster recovery", "business continuity", "backups had not", "backup job",
+    "backup storage", "failing silently", "never been tested", "never tested", "rto or rpo", "rto and rpo", "rto/rpo", "failover",
+    "restore", "power failure", "region outage", "dr plan", "recovery plan"],
 };
 
 export function classify(incident: string): Archetype {
@@ -817,6 +821,39 @@ const CURATED: Record<Exclude<Archetype, "generic">, AuditResult> = {
         "If any payment looks fraudulent, involve finance and legal, preserve the logs and consider recovery, insurance and law-enforcement steps; report the deficiency to management as a potential fraud risk.",
       step_3_permanent_fix:
         "Make every role change trigger a manager review that removes access no longer needed within 5 business days, enforce SoD rules in the ERP so conflicting roles cannot be granted together, and run monthly SoD conflict reports.",
+    },
+  },
+
+  "backup-dr-failure": {
+    incident_title: "Silent Backup Failure and Untested Disaster Recovery",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via monitored, restore-tested backups and a disaster recovery plan with tested RTO/RPO targets" },
+    incident_summary:
+      "Backups stopped completing for six weeks without any alert, and the never-tested disaster recovery plan had no recovery targets, so a data-centre power failure turned into a three-day payroll delay — a continuity and availability failure rather than an attack.",
+    severity_level: "High",
+    failure_category: "Business Continuity & Resilience",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "PR.DS-11, RC.RP-01, RC.RP-05, DE.CM-09", function_name: "PROTECT & RECOVER — Backups, Recovery Plan Execution and Restoration Integrity" },
+      iso_27001_2022: { control_id: "A.8.13 & A.5.30 & A.8.14 & A.8.16", control_name: "Information backup / ICT readiness for business continuity / Redundancy of information processing facilities / Monitoring activities", category: "Technological & Organizational", audit_finding: "Non-conformity: backups were neither monitored nor restore-tested (A.8.13, A.8.16), ICT continuity readiness was never exercised (A.5.30), and no redundant processing capacity existed (A.8.14)." },
+      soc_2: { criteria: "A1.2, CC7.5", name: "Availability — backup, recovery infrastructure / Recovery from incidents", audit_finding: "Exception: backup and recovery controls supporting the availability commitments were not operating, and recovery was improvised." },
+      gdpr: { article: "Art. 32", name: "Security of processing (availability and resilience; ability to restore access in a timely manner)", regulatory_risk: "Art. 32(1)(b)-(d) requires resilience, timely restoration and regular testing. If any payroll data had been permanently lost, that loss would itself be a personal data breach to assess under Art. 33." },
+      ccpa_cpra: { section: "1798.81.5", name: "Duty to maintain reasonable security procedures", regulatory_risk: "Unmonitored backups and an untested recovery plan fall short of reasonable security if California employee data is processed." },
+      hipaa: { rule: "N/A", name: "HIPAA", regulatory_risk: "Not applicable — payroll data is not ePHI. (For a covered entity, the contingency plan rule 164.308(a)(7) would apply.)" },
+    },
+    audit_evidence_required: [
+      "Backup job history and scheduler logs covering the six-week failure window.",
+      "Backup monitoring and alerting configuration, including who receives failure alerts.",
+      "Records of the last successful restore test and its results.",
+      "The disaster recovery / business continuity plan with RTO and RPO targets, owners and approval history.",
+      "Business impact analysis for payroll, and evidence of any DR exercise or tabletop test.",
+      "Incident timeline from the power failure to full recovery, including data restored and data lost.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Free or extend backup storage, run and verify a full backup immediately, confirm a clean restore in an isolated environment, and inform affected clients of the payroll delay.",
+      step_2_leak_and_legal:
+        "Check whether any personal data was permanently lost or corrupted during the rebuild — if so, assess it as a personal data breach (GDPR Art. 33, 72 hours) — and review contractual SLAs with payroll clients for penalties or notice duties.",
+      step_3_permanent_fix:
+        "Monitor every backup job with alerts on failure or missed runs, keep immutable off-site copies, set and approve RTO/RPO targets from a business impact analysis, add redundant or secondary-site capacity, and test restores and the DR plan at least annually.",
     },
   },
 };

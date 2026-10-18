@@ -31,12 +31,13 @@ describe("demo scenarios", () => {
   });
 });
 
-describe("identity governance scenarios", () => {
+describe("identity governance and continuity scenarios", () => {
   it.each([
     ["privileged-access", "Two admins kept standing global admin rights and nobody reviewed the break-glass account after it was used."],
     ["access-review-failure", "The system owner rubber-stamped the access review and certified their own access on a manually compiled user listing."],
     ["non-human-identity", "A service account with an API token that was never rotated still had interactive login enabled."],
     ["sod-conflict", "After a role change the clerk kept both roles, a segregation of duties conflict that let them approve payments."],
+    ["backup-dr-failure", "Our backup job had been failing silently and the disaster recovery plan was never tested, so the restore took four days."],
   ])("free text classifies as %s and stays grounded", (arch, text) => {
     expect(classify(text)).toBe(arch);
     expect(verify(analyzeLocally(text)).unverified).toEqual([]);

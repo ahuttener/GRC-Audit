@@ -9,7 +9,8 @@ export type FailureCategory =
   | "Third-Party Risk"
   | "Endpoint Security"
   | "Vulnerability Management"
-  | "Governance & Compliance";
+  | "Governance & Compliance"
+  | "Business Continuity & Resilience";
 
 export type RiskStrategy = "MITIGATE" | "AVOID" | "TRANSFER" | "ACCEPT";
 
