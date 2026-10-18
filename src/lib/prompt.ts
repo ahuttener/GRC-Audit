@@ -23,6 +23,9 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   supplier) and make sure every one is covered by at least one cited ISO control and, where one exists,
   one SOC 2 criterion. If your audit evidence or remediation addresses a weakness, its control must be
   cited too — e.g. an unvetted contractor -> A.5.19 / CC9.2, physical entry -> A.7.2 / CC6.4.
+  Common pairs: MFA or strong authentication -> A.8.5 / PR.AA-03; slow or missed detection ->
+  A.8.16 / DE.CM; credentials never rotated or access never reviewed -> A.5.18; network
+  separation -> A.8.22. Only cite them when the incident actually shows that weakness.
 - Breach-notification provisions (GDPR Art. 33 / Art. 34, CCPA/CPRA 1798.82 / 1798.150, HIPAA
   164.404 / 164.408) apply ONLY when personal data was actually accessed, disclosed, altered or lost.
   If the incident is fraud or a control failure with no personal data compromised (e.g. a deepfake
