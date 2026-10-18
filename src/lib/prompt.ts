@@ -14,6 +14,11 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   explain why in its finding/risk field. Never invent an ID to fill a slot.
 - AIUC-1 (the AI agent standard) applies ONLY when an AI system, chatbot, LLM or AI agent is part of
   the incident. Otherwise set aiuc_1.requirements to "N/A" and say no AI system is involved.
+- Cite EVERY directly relevant control in each framework, not just the most obvious one. For ISO/IEC
+  27001:2022 this is usually 2-4 Annex A controls joined with " & " (e.g. "A.8.1 & A.6.5 & A.5.14"):
+  check the People (A.6), Physical (A.7) and Technological (A.8) themes as well as Organizational
+  (A.5) - e.g. personal devices -> A.8.1, a leaver who kept access -> A.6.5 / A.5.18, unapproved
+  channels -> A.5.14 / A.5.10. Do not pad with loosely related controls.
 - Choose the primary ISO 31000 / NIST risk-treatment strategy (MITIGATE, AVOID, TRANSFER or ACCEPT)
   with a one-line rationale; most live incidents are MITIGATE.
 - Write every free-text field in the same language as the incident description (e.g. Portuguese in,
@@ -28,7 +33,7 @@ Return ONLY a single valid JSON object (no markdown, no prose outside the JSON) 
   "failure_category": "Identity & Access Management" | "Data Leakage" | "Cloud Misconfiguration" | "Third-Party Risk" | "Endpoint Security" | "Vulnerability Management" | "Governance & Compliance",
   "recommended_strategy": { "strategy": "MITIGATE" | "AVOID" | "TRANSFER" | "ACCEPT", "rationale": "one line, e.g. 'via automated SCIM deprovisioning'" },
   "grounded_frameworks": {
-    "iso_27001_2022": { "control_id": "A.5.18", "control_name": "...", "category": "People / Organizational / Physical / Technological", "audit_finding": "..." },
+    "iso_27001_2022": { "control_id": "A.8.1 & A.6.5", "control_name": "...", "category": "People / Organizational / Physical / Technological", "audit_finding": "..." },
     "soc_2": { "criteria": "CC6.2, CC6.3", "name": "...", "audit_finding": "..." },
     "gdpr": { "article": "Art. 32 & Art. 33", "name": "...", "regulatory_risk": "..." },
     "ccpa_cpra": { "section": "1798.81.5", "name": "...", "regulatory_risk": "..." },

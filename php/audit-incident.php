@@ -201,13 +201,18 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   and explain why in its finding/risk field. Never invent an ID to fill a slot.
 - AIUC-1 (the AI agent standard) applies ONLY when an AI system, chatbot, LLM or AI agent is part of
   the incident. Otherwise set aiuc_1.requirements to "N/A" and say no AI system is involved.
+- Cite EVERY directly relevant control in each framework, not just the most obvious one. For ISO/IEC
+  27001:2022 this is usually 2-4 Annex A controls joined with " & " (e.g. "A.8.1 & A.6.5 & A.5.14"):
+  check the People (A.6), Physical (A.7) and Technological (A.8) themes as well as Organizational
+  (A.5) - e.g. personal devices -> A.8.1, a leaver who kept access -> A.6.5 / A.5.18, unapproved
+  channels -> A.5.14 / A.5.10. Do not pad with loosely related controls.
 - Choose the primary ISO 31000 / NIST risk-treatment strategy (MITIGATE, AVOID, TRANSFER, ACCEPT)
   with a one-line rationale; most live incidents are MITIGATE.
 - Write every free-text field in the same language as the incident description. Keep control IDs,
   article numbers and official control names exactly as in the CONTEXT.
 
 Field guidance: incident_title = concise headline; incident_summary = 1-2 sentence executive
-briefing; iso_27001_2022.category = People / Organizational / Physical / Technological;
+briefing; iso_27001_2022.control_id like "A.8.1 & A.6.5"; iso_27001_2022.category = People / Organizational / Physical / Technological;
 soc_2.criteria like "CC6.2, CC6.3"; gdpr.article like "Art. 32 & Art. 33"; ccpa_cpra.section like
 "1798.150"; hipaa.rule like "164.308(a)(3)(ii)(C)"; nist_csf_2.subcategories like
 "PR.AA-01, PR.AA-05"; aiuc_1.requirements like "B006, D003"; audit_evidence_required = concrete artefacts an auditor would request;
