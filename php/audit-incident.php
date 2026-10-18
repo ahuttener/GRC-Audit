@@ -217,6 +217,12 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   processing is genuinely at stake, otherwise set the field to "N/A" and say why.
 - Use the failure_category "Business Continuity & Resilience" for outages, failed or untested backups, disaster recovery
   and availability failures where no attacker is the root cause.
+- For HIPAA, check all three safeguard types - Administrative (164.308), Physical (164.310) and
+  Technical (164.312) - when ePHI is involved; workstations, facilities and devices are Physical.
+- Apply each law only within its scope. CCPA/CPRA does not apply to medical information governed by
+  the CMIA or to PHI held by HIPAA covered entities or business associates (1798.146): set it to "N/A"
+  or cite 1798.146 to explain the exemption. GDPR applies only with an EU/EEA establishment or EU/EEA
+  data subjects; HIPAA only to covered entities and business associates.
 - Choose the primary ISO 31000 / NIST risk-treatment strategy (MITIGATE, AVOID, TRANSFER, ACCEPT)
   with a one-line rationale; most live incidents are MITIGATE.
 - Write every free-text field in the same language as the incident description. Keep control IDs,
