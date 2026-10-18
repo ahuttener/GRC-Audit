@@ -41,6 +41,14 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   cycle) plus whichever of A.8.28 (secure coding), A.8.29 (security testing), A.8.32 (change
   management), A.8.8 (technical vulnerabilities), A.8.9 (configuration management) and A.8.31
   (separation of environments) apply; NIST PR.PS-06; SOC 2 CC8.1.
+  Apply this only to the security of the software itself: model bias, fairness or accuracy of an AI
+  decision is not a secure-development failure - cover it with AIUC-1 testing and harm controls,
+  ISO A.5.31 / A.5.34 and the relevant law instead.
+- AIUC-1 agent-action requirements (B006, C005) apply only to AI agents that take actions on their
+  own (tool calls, transactions, sending messages, changing systems). For a model that scores,
+  classifies or recommends, use the testing, harm, human-review, disclosure and vendor requirements
+  (e.g. C002, C003, C007, C010, E016, E006). Automated decisions about people (hiring, credit,
+  insurance) under GDPR need Art. 22 and, for high-risk processing, Art. 35.
 - Choose the primary ISO 31000 / NIST risk-treatment strategy (MITIGATE, AVOID, TRANSFER or ACCEPT)
   with a one-line rationale; most live incidents are MITIGATE.
 - Write every free-text field in the same language as the incident description (e.g. Portuguese in,
