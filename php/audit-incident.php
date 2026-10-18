@@ -223,6 +223,11 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   the CMIA or to PHI held by HIPAA covered entities or business associates (1798.146): set it to "N/A"
   or cite 1798.146 to explain the exemption. GDPR applies only with an EU/EEA establishment or EU/EEA
   data subjects; HIPAA only to covered entities and business associates.
+- When software, code, builds, CI/CD pipelines, releases or third-party dependencies are involved,
+  also cite the process controls, not only the point controls: ISO A.8.25 (secure development life
+  cycle) plus whichever of A.8.28 (secure coding), A.8.29 (security testing), A.8.32 (change
+  management), A.8.8 (technical vulnerabilities), A.8.9 (configuration management) and A.8.31
+  (separation of environments) apply; NIST PR.PS-06; SOC 2 CC8.1.
 - Choose the primary ISO 31000 / NIST risk-treatment strategy (MITIGATE, AVOID, TRANSFER, ACCEPT)
   with a one-line rationale; most live incidents are MITIGATE.
 - Write every free-text field in the same language as the incident description. Keep control IDs,
