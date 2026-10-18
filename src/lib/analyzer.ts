@@ -23,6 +23,10 @@ type Archetype =
   | "agent-unauthorized-action"
   | "ai-hallucination"
   | "shadow-ai"
+  | "privileged-access"
+  | "access-review-failure"
+  | "non-human-identity"
+  | "sod-conflict"
   | "generic";
 
 // Bilingual (EN + PT-BR) keyword hints so typed incidents classify in demo mode.
@@ -84,6 +88,15 @@ const KEYWORDS: Record<Exclude<Archetype, "generic">, string[]> = {
   "shadow-ai": ["shadow ai", "public ai", "generative ai", "chatgpt", "model training", "pasted",
     "ai acceptable use", "ai vendor", "ia generativa", "ia pública", "ia publica", "colaram", "colou",
     "treinamento do modelo"],
+  "privileged-access": ["privileged", "standing admin", "standing global", "global admin", "domain admin",
+    "break-glass", "break glass", "just-in-time", "just in time", "elevation", "permanent admin"],
+  "access-review-failure": ["rubber-stamp", "rubber stamp", "certified their own", "self-certif",
+    "recertification", "manually compiled", "user listing", "extraction date", "review was late",
+    "days late", "completeness could not"],
+  "non-human-identity": ["service account", "non-human", "machine identity", "workload identity",
+    "api token", "deploy key", "never been rotated", "never rotated", "interactive login", "no registered owner"],
+  "sod-conflict": ["segregation of duties", "separation of duties", "toxic combination", "conflicting duties",
+    "role change", "transferred", "approve payments", "create a new payee", "sod conflict"],
 };
 
 export function classify(incident: string): Archetype {
@@ -673,6 +686,137 @@ const CURATED: Record<Exclude<Archetype, "generic">, AuditResult> = {
         "Assess the disclosure as a personal-data breach (GDPR Art. 33 within 72h if risky) and check contractual confidentiality duties to customers; document the decision.",
       step_3_permanent_fix:
         "Publish an AI acceptable use policy, provide an approved enterprise AI tool with a DPA and no-training terms, add DLP for AI destinations, train staff, and run vendor due diligence on every AI provider.",
+    },
+  },
+
+  // Identity governance archetypes — controls and test procedures adapted from the companion
+  // Identity Governance Audit Framework (IAM-06 movers, IAM-08 privileged access,
+  // IAM-09 access reviews, IAM-10 non-human identities).
+  "privileged-access": {
+    incident_title: "Standing Privileged Access & Uncontrolled Break-Glass Account",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via just-in-time elevation with independent approval and a sealed, monitored break-glass procedure" },
+    incident_summary:
+      "Production administrator rights were held permanently instead of granted just in time, the engineer approved their own elevations, and the break-glass account was used without alerting, post-use review or credential rotation — privileged access was neither restricted nor monitored.",
+    severity_level: "Critical",
+    failure_category: "Identity & Access Management",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "PR.AA-05, DE.CM-03", function_name: "PROTECT & DETECT — Access Permissions and Monitoring of Personnel Activity" },
+      iso_27001_2022: { control_id: "A.8.2 & A.5.3 & A.8.15", control_name: "Privileged access rights / Segregation of duties / Logging", category: "Technological & Organizational", audit_finding: "Non-conformity: privileged rights were standing rather than restricted and time-bound (A.8.2), requester and approver were the same person (A.5.3), and break-glass use was not reviewed from the logs (A.8.15)." },
+      soc_2: { criteria: "CC6.1, CC6.3, CC7.2", name: "Logical access security / Least privilege / Monitoring for anomalies", audit_finding: "Testing exception: elevations lacked independent approval and break-glass use produced no alert or post-use review." },
+      gdpr: { article: "Art. 32", name: "Security of processing", regulatory_risk: "Unrestricted administrator access to systems holding personal data is an Art. 32 weakness; any misuse would be a notifiable breach." },
+      ccpa_cpra: { section: "1798.81.5", name: "Duty to maintain reasonable security procedures", regulatory_risk: "Standing admin access to California consumer data falls short of reasonable security." },
+      hipaa: { rule: "164.312(a)(1) & 164.312(b)", name: "Access control / Audit controls (Technical Safeguards)", regulatory_risk: "Applicable IF the AWS organisation stores ePHI: access must be limited to authorised users and activity must be recorded and examined." },
+    },
+    audit_evidence_required: [
+      "Eligibility list for privileged roles with CISO and system-owner approval for each identity.",
+      "Elevation log for the period: justification, ticket reference, approver ≠ requester, duration and automatic expiry.",
+      "Listing of standing (non-JIT) privileged assignments at period end, with approved exceptions.",
+      "Break-glass procedure, sealed-credential (safe) log, use records, alerts raised and post-use reviews.",
+      "CloudTrail / IdP logs of administrative actions performed during each break-glass use.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Remove the standing admin assignment, rotate the break-glass credential and re-seal it under dual control, and revoke active admin sessions and access keys.",
+      step_2_leak_and_legal:
+        "Review every administrative action taken under standing rights and both break-glass uses to confirm they were authorised; if personal data was accessed or altered without authorisation, assess GDPR Art. 33 and state breach-notification duties.",
+      step_3_permanent_fix:
+        "Enforce just-in-time elevation (time-boxed, with justification and an approver different from the requester), separate admin identities, real-time alerts on any break-glass use with mandatory post-use review and rotation, and include privileged roles in every quarterly access review.",
+    },
+  },
+
+  "access-review-failure": {
+    incident_title: "Quarterly Access Review Late, Self-Certified and Built on an Unvalidated Listing",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via an identity-governance tool with system-generated listings, independent reviewers and SLA escalation" },
+    incident_summary:
+      "The quarterly user access review — the key detective control over access rights — was completed late, relied on a manually compiled listing whose completeness could not be shown (IPE), and included a reviewer certifying their own access with no changes, so inappropriate access could persist undetected.",
+    severity_level: "Medium",
+    failure_category: "Identity & Access Management",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "PR.AA-05", function_name: "PROTECT — Access permissions managed with least privilege and separation of duties" },
+      iso_27001_2022: { control_id: "A.5.18 & A.5.3", control_name: "Access rights / Segregation of duties", category: "Organizational", audit_finding: "Non-conformity: access rights were not reviewed at the planned interval on a reliable listing (A.5.18), and a reviewer certified their own access (A.5.3)." },
+      soc_2: { criteria: "CC6.2, CC6.3", name: "User registration & authorisation / Role-based access and periodic review", audit_finding: "Testing exception in the review sample: late completion and an unvalidated listing (information produced by the entity) mean the review cannot be relied on." },
+      gdpr: { article: "Art. 32", name: "Security of processing", regulatory_risk: "Regularly testing and evaluating access measures is part of Art. 32(1)(d); a review that cannot be relied on weakens that evidence." },
+      ccpa_cpra: { section: "1798.81.5", name: "Duty to maintain reasonable security procedures", regulatory_risk: "No direct violation by itself; it weakens the demonstration of reasonable security if California data is in scope." },
+      hipaa: { rule: "164.308(a)(4)", name: "Information access management (Administrative Safeguards)", regulatory_risk: "Applicable IF the systems hold ePHI: access authorisations must be reviewed and kept appropriate." },
+    },
+    audit_evidence_required: [
+      "Review schedule and completion evidence for every in-scope system, against the 30-day SLA after quarter end.",
+      "For each listing used: source system, query/parameters and extraction date (IPE completeness and accuracy).",
+      "Reviewer assignment showing no one certified their own access, plus sign-off evidence.",
+      "Revocation tickets for access marked for removal, with completion dates against the SLA.",
+      "Re-performance: compare a system-generated listing with the reviewed listing for differences.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Re-run the review for the affected system on a system-generated listing with an independent reviewer, and remove any access found to be unnecessary.",
+      step_2_leak_and_legal:
+        "No breach by itself — record it as a control deficiency, assess whether any inappropriate access was used during the gap, and disclose the exception in the audit report if it affects the opinion.",
+      step_3_permanent_fix:
+        "Run reviews in an identity-governance tool that generates listings directly from the source systems, block self-certification, add reminders and escalation before the deadline, and track revocations to closure within SLA.",
+    },
+  },
+
+  "non-human-identity": {
+    incident_title: "Ownerless Service Account with a Never-Rotated Token",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via a non-human identity inventory with owners, vaulted secrets and automatic rotation" },
+    incident_summary:
+      "A service account with production write access had no owner, a four-year-old API token and interactive login enabled — a non-human identity outside the identity lifecycle that no one reviewed or could justify.",
+    severity_level: "High",
+    failure_category: "Identity & Access Management",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "PR.AA-01, PR.AA-05", function_name: "PROTECT — Identities & credentials managed; least-privilege access permissions" },
+      iso_27001_2022: { control_id: "A.5.16 & A.5.17 & A.8.2", control_name: "Identity management / Authentication information / Privileged access rights", category: "Organizational & Technological", audit_finding: "Non-conformity: the identity had no owner or purpose (A.5.16), its secret was never rotated (A.5.17), and it held excessive production privileges (A.8.2)." },
+      soc_2: { criteria: "CC6.1, CC6.2", name: "Logical access security / Registration and removal of users", audit_finding: "Exception: a non-human identity was not inventoried, owned or reviewed, and its credential was not managed." },
+      gdpr: { article: "Art. 32", name: "Security of processing", regulatory_risk: "A long-lived, unowned credential with write access to systems holding personal data is an Art. 32 weakness." },
+      ccpa_cpra: { section: "1798.81.5", name: "Duty to maintain reasonable security procedures", regulatory_risk: "Unmanaged machine credentials to California consumer data fall short of reasonable security." },
+      hipaa: { rule: "164.312(d) & 164.312(a)(1)", name: "Person or entity authentication / Access control", regulatory_risk: "Applicable IF the database holds ePHI: entities must be authenticated and their access limited." },
+    },
+    audit_evidence_required: [
+      "Non-human identity inventory (owner, purpose, systems) reconciled two ways against IdP, cloud and database account listings.",
+      "Configuration showing whether interactive login is disabled for each service account.",
+      "Secrets-manager records showing where the token is stored and its last rotation date.",
+      "Permissions granted to the account compared with what the integration actually uses.",
+      "Activity logs for the account to detect use outside the nightly integration.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Assign a temporary owner, rotate the token into the secrets manager, disable interactive login and reduce permissions to what the integration needs — after confirming the job still runs.",
+      step_2_leak_and_legal:
+        "Review the account's activity history for use outside the integration; if unauthorised access to personal data is found, assess breach-notification duties.",
+      step_3_permanent_fix:
+        "Keep a non-human identity inventory with owners and purpose, prefer short-lived credentials, rotate vaulted secrets at least every 90 days, block interactive login, and review service accounts in every quarterly access review.",
+    },
+  },
+
+  "sod-conflict": {
+    incident_title: "Segregation of Duties Conflict Left by an Unreviewed Role Change",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via mover reviews that remove old access within SLA and preventive SoD rules in the ERP" },
+    incident_summary:
+      "After a transfer, an employee kept their previous ERP role on top of the new one, combining payee creation with payment approval — a toxic combination that enables fraud and went undetected for five months because role changes did not trigger an access review.",
+    severity_level: "High",
+    failure_category: "Identity & Access Management",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "PR.AA-05", function_name: "PROTECT — Access permissions incorporating least privilege and separation of duties" },
+      iso_27001_2022: { control_id: "A.5.3 & A.5.18 & A.6.5", control_name: "Segregation of duties / Access rights / Responsibilities after change of employment", category: "Organizational & People", audit_finding: "Non-conformity: conflicting duties were not separated (A.5.3) and access rights were not adjusted after the change of role (A.5.18, A.6.5)." },
+      soc_2: { criteria: "CC6.2, CC6.3", name: "Authorisation and modification of access / Segregation of incompatible duties", audit_finding: "Testing exception: access no longer required after a role change was not removed, creating incompatible duties." },
+      gdpr: { article: "N/A", name: "GDPR", regulatory_risk: "Not applicable unless personal data was misused; this is primarily a financial-fraud control failure." },
+      ccpa_cpra: { section: "N/A", name: "CCPA/CPRA", regulatory_risk: "Not applicable — no California consumer personal information is involved." },
+      hipaa: { rule: "N/A", name: "HIPAA", regulatory_risk: "Not applicable — no ePHI is involved." },
+    },
+    audit_evidence_required: [
+      "HR job-change record with the effective transfer date.",
+      "ERP entitlements before and after the change, showing the old role was never removed.",
+      "The SoD rule set (conflict matrix) and any report of conflicts for the period.",
+      "Payee-creation and payment-approval logs for the user during the five months.",
+      "Mover workflow tickets showing whether the role change triggered a manager review.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Remove the old accounts-payable role at once and have an independent person review every payee the user created and every payment they approved.",
+      step_2_leak_and_legal:
+        "If any payment looks fraudulent, involve finance and legal, preserve the logs and consider recovery, insurance and law-enforcement steps; report the deficiency to management as a potential fraud risk.",
+      step_3_permanent_fix:
+        "Make every role change trigger a manager review that removes access no longer needed within 5 business days, enforce SoD rules in the ERP so conflicting roles cannot be granted together, and run monthly SoD conflict reports.",
     },
   },
 };

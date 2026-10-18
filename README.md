@@ -94,7 +94,13 @@ ANTHROPIC_API_KEY=sk-ant-...        # Claude (used if set)
 ## Quick-test scenarios
 
 One-click pills load realistic audit findings: **Zombie Account**, **Public API Key & Secret
-Exposure**, **Customer Data Leak via Unencrypted Channel**, **Missing MFA on Cloud Infrastructure**.
+Exposure**, **Customer Data Leak via Unencrypted Channel**, **Missing MFA on Cloud Infrastructure**,
+and 18 more across vulnerability management, governance and AI.
+
+Four **identity governance** scenarios — standing privileged access and break-glass, a rubber-stamped
+quarterly access review, an ownerless service account, and a segregation-of-duties conflict after a
+role change — are drawn from the controls and test procedures (IAM-06, IAM-08, IAM-09, IAM-10) of the
+companion [Identity Governance Audit Framework](https://github.com/ahuttener/identity-governance-audit-framework).
 
 ## Response schema (`POST /api/audit-incident`)
 
@@ -123,7 +129,7 @@ src/
                                  FrameworkMatrix, EvidenceCard, RemediationRoadmap, …
   data/
     frameworks/*.json            embedded official catalogs (grounding source)
-    scenarios.ts                 the 4 quick-test scenarios
+    scenarios.ts                 the 22 quick-test scenarios
   lib/
     grounding.ts                 retrieve + verify against catalogs (+ grounding.test.ts)
     rateLimit.ts                 credit protection for the API route (+ rateLimit.test.ts)

@@ -5,6 +5,7 @@ import { SCENARIOS } from "@/data/scenarios";
 import {
   UserX, KeyRound, MailWarning, ShieldOff, DatabaseBackup, Fish, Handshake, Laptop, CloudOff,
   TimerOff, FileQuestion, EyeOff, Bug, GitPullRequest, Syringe, Trash2, MessageSquareWarning, Brain,
+  Crown, ClipboardX, Bot, Split,
   Loader2, Search,
 } from "lucide-react";
 
@@ -27,6 +28,10 @@ const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   trash: Trash2,
   "message-warning": MessageSquareWarning,
   brain: Brain,
+  crown: Crown,
+  "clipboard-x": ClipboardX,
+  bot: Bot,
+  split: Split,
 };
 
 const MAX = 4000;

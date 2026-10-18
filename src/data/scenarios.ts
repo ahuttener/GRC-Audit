@@ -9,13 +9,15 @@ export interface Scenario {
   icon:
     | "user-x" | "key-round" | "mail-warning" | "shield-off" | "database-backup" | "fish"
     | "handshake" | "laptop" | "cloud-off" | "timer-off" | "file-question" | "eye-off"
-    | "bug" | "git-pull-request" | "syringe" | "trash" | "message-warning" | "brain";
+    | "bug" | "git-pull-request" | "syringe" | "trash" | "message-warning" | "brain"
+    | "crown" | "clipboard-x" | "bot" | "split";
   archetype:
     | "zombie-account" | "secret-exposure" | "data-leak" | "missing-mfa" | "ransomware"
     | "phishing-bec" | "vendor-breach" | "lost-device-phi" | "public-bucket"
     | "late-notification" | "dsar-ignored" | "missing-logs" | "unpatched-vpn"
     | "unapproved-change" | "prompt-injection" | "agent-unauthorized-action" | "ai-hallucination"
-    | "shadow-ai";
+    | "shadow-ai" | "privileged-access" | "access-review-failure" | "non-human-identity"
+    | "sod-conflict";
   description: string;
 }
 
@@ -181,5 +183,43 @@ export const SCENARIOS: Scenario[] = [
     archetype: "shadow-ai",
     description:
       "Employees pasted customer spreadsheets with personal data and proprietary source code into a free public generative AI chatbot whose terms allow prompts to be used for model training. There is no AI acceptable use policy, and the AI vendor was never assessed.",
+  },
+  // Identity governance scenarios — drawn from the companion Identity Governance Audit
+  // Framework (controls IAM-06, IAM-08, IAM-09 and IAM-10).
+  {
+    id: "privileged-access",
+    title: "Standing Admin Rights & Uncontrolled Break-Glass",
+    badge: "Identity Governance",
+    icon: "crown",
+    archetype: "privileged-access",
+    description:
+      "A cloud engineer held standing global admin rights in the production AWS organisation instead of just-in-time elevation. The break-glass account had been used twice with no alert or post-use review, its password was never rotated, and the engineer approved their own elevation requests.",
+  },
+  {
+    id: "access-review-failure",
+    title: "Rubber-Stamped Quarterly Access Review",
+    badge: "Identity Governance",
+    icon: "clipboard-x",
+    archetype: "access-review-failure",
+    description:
+      "The Q3 user access review for five critical systems was finished 11 days late. The AWS production user listing was a manually compiled spreadsheet with no source query or extraction date, so its completeness could not be validated, and one system owner certified their own access and rubber-stamped every user without changes.",
+  },
+  {
+    id: "non-human-identity",
+    title: "Ownerless Service Account with a Never-Rotated Token",
+    badge: "Identity Governance",
+    icon: "bot",
+    archetype: "non-human-identity",
+    description:
+      "A security review found a service account used by the nightly billing integration with no registered owner. Its API token had never been rotated in four years, the non-human identity still allowed interactive login, and it held write access to the production database. Nobody could say which team still needed it.",
+  },
+  {
+    id: "sod-conflict",
+    title: "Segregation of Duties Conflict after a Role Change",
+    badge: "Identity Governance",
+    icon: "split",
+    archetype: "sod-conflict",
+    description:
+      "An accounts payable clerk transferred to the treasury team kept their old ERP role after the role change. The combined access let them create a new payee and approve payments to it — a segregation of duties conflict (toxic combination) that went unnoticed for five months.",
   },
 ];
