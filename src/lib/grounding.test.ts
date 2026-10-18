@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { isCitationGrounded, verify } from "@/lib/grounding";
 import { analyzeLocally } from "@/lib/analyzer";
 import { SCENARIOS } from "@/data/scenarios";
+import soc2 from "@/data/frameworks/soc-2-tsc.json";
 
 describe("isCitationGrounded — real control/article IDs are accepted", () => {
   it.each([
@@ -16,6 +17,12 @@ describe("isCitationGrounded — real control/article IDs are accepted", () => {
     ["hipaa", "164.308(a)(3)(ii)(C)"],
     ["hipaa", "164.308(a)(1)"], // parent paragraph of 164.308(a)(1)(ii)(A)
     ["soc_2", "CC6.1"],
+    ["soc_2", "CC6.4"], // physical access
+    ["soc_2", "CC6.5"],
+    ["soc_2", "CC9.1"],
+    ["soc_2", "A1.3"],
+    ["soc_2", "PI1.2"],
+    ["soc_2", "P6.6"],
     ["ccpa_cpra", "1798.100(e)"],
     ["ccpa_cpra", "1798.81.5"],
   ])("%s %s", (key, id) => {
@@ -78,5 +85,12 @@ describe("verify()", () => {
     const v = verify(analyzeLocally(text));
     expect(v.unverified).toEqual([]);
     expect(v.grounded).toBe(true);
+  });
+});
+
+describe("SOC 2 catalog", () => {
+  it("lists all 61 Trust Services Criteria (33 common + A, PI, C and P series)", () => {
+    expect(soc2.criteria).toHaveLength(61);
+    expect(new Set(soc2.criteria.map((c) => c.id)).size).toBe(61);
   });
 });

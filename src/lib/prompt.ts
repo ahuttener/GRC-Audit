@@ -15,10 +15,14 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
 - AIUC-1 (the AI agent standard) applies ONLY when an AI system, chatbot, LLM or AI agent is part of
   the incident. Otherwise set aiuc_1.requirements to "N/A" and say no AI system is involved.
 - Cite EVERY directly relevant control in each framework, not just the most obvious one. For ISO/IEC
-  27001:2022 this is usually 2-4 Annex A controls joined with " & " (e.g. "A.8.1 & A.6.5 & A.5.14"):
+  27001:2022 this is usually 2-6 Annex A controls joined with " & " (e.g. "A.8.1 & A.6.5 & A.5.14"):
   check the People (A.6), Physical (A.7) and Technological (A.8) themes as well as Organizational
   (A.5) - e.g. personal devices -> A.8.1, a leaver who kept access -> A.6.5 / A.5.18, unapproved
   channels -> A.5.14 / A.5.10. Do not pad with loosely related controls.
+- Before answering, list each distinct failure in the incident (people, process, technology, physical,
+  supplier) and make sure every one is covered by at least one cited ISO control and, where one exists,
+  one SOC 2 criterion. If your audit evidence or remediation addresses a weakness, its control must be
+  cited too — e.g. an unvetted contractor -> A.5.19 / CC9.2, physical entry -> A.7.2 / CC6.4.
 - Breach-notification provisions (GDPR Art. 33 / Art. 34, CCPA/CPRA 1798.82 / 1798.150, HIPAA
   164.404 / 164.408) apply ONLY when personal data was actually accessed, disclosed, altered or lost.
   If the incident is fraud or a control failure with no personal data compromised (e.g. a deepfake
