@@ -3,6 +3,9 @@ import { isCitationGrounded, verify } from "@/lib/grounding";
 import { analyzeLocally } from "@/lib/analyzer";
 import { SCENARIOS } from "@/data/scenarios";
 import soc2 from "@/data/frameworks/soc-2-tsc.json";
+import nist from "@/data/frameworks/nist-csf-2.0.json";
+import gdpr from "@/data/frameworks/gdpr-official.json";
+import hipaa from "@/data/frameworks/hipaa-security-privacy.json";
 
 describe("isCitationGrounded — real control/article IDs are accepted", () => {
   it.each([
@@ -32,10 +35,10 @@ describe("isCitationGrounded — real control/article IDs are accepted", () => {
 
 describe("isCitationGrounded — look-alike IDs are rejected (regression for the prefix bug)", () => {
   it.each([
-    ["gdpr", "Art. 3"], // used to pass because "Art. 32" starts with it
-    ["gdpr", "Art. 50"], // used to pass because it starts with "Art. 5"
-    ["gdpr", "Art. 99"], // used to pass because it starts with "Art. 9"
-    ["gdpr", "Art. 1"], // used to pass because "Art. 15-22" starts with it
+    ["gdpr", "Art. 320"], // the GDPR has 99 articles; must not pass because it starts with "Art. 32"
+    ["gdpr", "Art. 500"], // must not pass because it starts with "Art. 50" / "Art. 5"
+    ["gdpr", "Art. 990"], // must not pass because it starts with "Art. 99" / "Art. 9"
+    ["gdpr", "Art. 150"], // must not pass via "Art. 15" or the "Art. 15-22" range
     ["gdpr", "Art. 150"],
     ["iso_27001_2022", "A.5.99"],
     ["iso_27001_2022", "A.5.1.8"],
@@ -64,9 +67,9 @@ describe("verify()", () => {
   it("flags an invented article and drops the Grounded badge", () => {
     const base = analyzeLocally(SCENARIOS[0].description, SCENARIOS[0].archetype);
     const r = structuredClone(base);
-    r.grounded_frameworks.gdpr.article = "Art. 3 & Art. 32";
+    r.grounded_frameworks.gdpr.article = "Art. 320 & Art. 32";
     const v = verify(r);
-    expect(v.unverified).toContain("Art. 3");
+    expect(v.unverified).toContain("Art. 320");
     expect(v.verified).toContain("Art. 32");
     expect(v.grounded).toBe(false);
   });
@@ -92,5 +95,41 @@ describe("SOC 2 catalog", () => {
   it("lists all 61 Trust Services Criteria (33 common + A, PI, C and P series)", () => {
     expect(soc2.criteria).toHaveLength(61);
     expect(new Set(soc2.criteria.map((c) => c.id)).size).toBe(61);
+  });
+});
+
+describe("complete catalogs", () => {
+  it("NIST CSF 2.0 lists all 106 active subcategories with no duplicates", () => {
+    expect(nist.controls).toHaveLength(106);
+    expect(new Set(nist.controls.map((c) => c.id)).size).toBe(106);
+  });
+
+  it("GDPR lists every article from 1 to 99", () => {
+    const ids = new Set(gdpr.articles.map((a) => a.id));
+    for (let n = 1; n <= 99; n++) expect(ids.has(`Art. ${n}`)).toBe(true);
+  });
+
+  it.each([
+    ["nist_csf_2", "GV.OV-01"],
+    ["nist_csf_2", "PR.IR-03"],
+    ["nist_csf_2", "RC.CO-04"],
+    ["gdpr", "Art. 37"],
+    ["gdpr", "Art. 82"],
+    ["hipaa", "164.310(a)(1)"],
+    ["hipaa", "164.310(d)(2)(i)"],
+    ["hipaa", "164.308(a)(7)(ii)(D)"],
+    ["hipaa", "164.530"],
+    ["ccpa_cpra", "1798.135"],
+    ["ccpa_cpra", "1798.199.40"],
+  ])("%s %s is now grounded", (key, id) => {
+    expect(isCitationGrounded(id, key)).toBe(true);
+  });
+
+  it("HIPAA has every Security Rule section and no duplicate citations", () => {
+    const ids = hipaa.controls.map((c) => c.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const sec of ["164.308", "164.310", "164.312", "164.314", "164.316"]) {
+      expect(ids.some((id) => id.startsWith(sec))).toBe(true);
+    }
   });
 });
