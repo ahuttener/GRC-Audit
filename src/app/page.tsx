@@ -109,10 +109,10 @@ export default function Page() {
                 className="h-14 w-14 shrink-0 rounded-full shadow-[0_0_24px_rgba(6,182,212,0.45)] sm:h-16 sm:w-16"
               />
               <div>
-                <h1 className="text-glow font-display text-3xl font-normal uppercase tracking-[0.05em] text-accent sm:text-4xl">
+                <h1 className="text-glow font-display text-3xl font-black uppercase tracking-[0.05em] text-accent sm:text-4xl">
                   GRC Audit
                 </h1>
-                <p className="mt-1 text-[13px] font-medium uppercase tracking-[0.18em] text-slate-400">
+                <p className="mt-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-400 sm:text-sm">
                   Incident → Framework diagnostic &amp; remediation
                 </p>
               </div>
