@@ -26,6 +26,9 @@ header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
 
+// Config lookup, rate-limit counters and the anonymous metrics log (Indicators API).
+require_once __DIR__ . '/_metrics-lib.php';
+
 function respond(int $status, array $body): void
 {
     http_response_code($status);
@@ -33,67 +36,15 @@ function respond(int $status, array $body): void
     exit;
 }
 
-function load_config(): array
+/** respond() for a request that reached the AI path but did not finish: counted for the indicators. */
+function fail(array $cfg, string $outcome, int $status, array $body): void
 {
-    $cfg = [];
-    $dir = __DIR__;
-    for ($i = 0; $i < 6; $i++) { // api/ → grcaudit/ → public_html/ → <domain>/ → ...
-        $candidate = $dir . DIRECTORY_SEPARATOR . 'grcaudit-config.php';
-        if (@is_file($candidate)) {
-            $loaded = include $candidate;
-            if (is_array($loaded)) {
-                $cfg = $loaded;
-                break;
-            }
-        }
-        $parent = dirname($dir);
-        if ($parent === $dir) {
-            break;
-        }
-        $dir = $parent;
-    }
-    if (!$cfg && @is_file(__DIR__ . '/config.php')) {
-        $loaded = include __DIR__ . '/config.php';
-        if (is_array($loaded)) {
-            $cfg = $loaded;
-        }
-    }
-    $envKey = getenv('ANTHROPIC_API_KEY');
-    if (is_string($envKey) && $envKey !== '') {
-        $cfg['ANTHROPIC_API_KEY'] = $envKey;
-    }
-    $envModel = getenv('LLM_MODEL');
-    if (is_string($envModel) && $envModel !== '') {
-        $cfg['LLM_MODEL'] = $envModel;
-    }
-    return $cfg;
+    grc_metrics_count($cfg, 'llm_' . $outcome);
+    respond($status, $body);
 }
 
-/** Atomically increment a counter file; false when the limit is already reached or storage fails. */
-function bump_counter(string $file, int $limit): bool
-{
-    $fh = @fopen($file, 'c+');
-    if ($fh === false) {
-        error_log('[grcaudit] rate-limit storage not writable: ' . $file);
-        return false; // fail closed: protect the credits, the page falls back to demo
-    }
-    $ok = false;
-    if (flock($fh, LOCK_EX)) {
-        $count = (int) stream_get_contents($fh);
-        if ($count < $limit) {
-            ftruncate($fh, 0);
-            rewind($fh);
-            fwrite($fh, (string) ($count + 1));
-            fflush($fh);
-            $ok = true;
-        }
-        flock($fh, LOCK_UN);
-    }
-    fclose($fh);
-    return $ok;
-}
-
-$cfg            = load_config();
+$started        = microtime(true);
+$cfg            = grc_load_config(__DIR__);
 $apiKey         = (string) ($cfg['ANTHROPIC_API_KEY'] ?? '');
 if ($apiKey !== '' && strncmp($apiKey, 'sk-', 3) !== 0) {
     $apiKey = ''; // a placeholder is still in the config (e.g. COLE_A_CHAVE_AQUI) → treat as not configured
@@ -121,29 +72,26 @@ $body     = json_decode($raw, true);
 $incident = (is_array($body) && isset($body['incident']) && is_string($body['incident'])) ? trim($body['incident']) : '';
 $len      = function_exists('mb_strlen') ? mb_strlen($incident, 'UTF-8') : strlen($incident);
 if ($len < 15) {
-    respond(400, ['error' => 'Please describe the incident in a little more detail (at least 15 characters).']);
+    fail($cfg, 'input_error', 400, ['error' => 'Please describe the incident in a little more detail (at least 15 characters).']);
 }
 if ($len > 4000) {
-    respond(400, ['error' => 'Incident text is too long (max 4000 characters).']);
+    fail($cfg, 'input_error', 400, ['error' => 'Incident text is too long (max 4000 characters).']);
 }
 if ($apiKey === '') {
-    respond(503, ['error' => 'AI mode is not configured on this server.', 'fallback' => 'demo']);
+    fail($cfg, 'not_configured', 503, ['error' => 'AI mode is not configured on this server.', 'fallback' => 'demo']);
 }
 
 // ---------- Rate limiting ----------
-$rlDir = rtrim((string) ($cfg['RATE_LIMIT_DIR'] ?? (sys_get_temp_dir() . '/grcaudit-ratelimit')), '/');
-if (!is_dir($rlDir)) {
-    @mkdir($rlDir, 0700, true);
-}
+$rlDir  = grc_rl_dir($cfg);
 $day    = gmdate('Ymd');
 $hour   = gmdate('YmdH');
-$ipHash = substr(hash_hmac('sha256', ($_SERVER['REMOTE_ADDR'] ?? 'unknown') . '|' . $day, $apiKey), 0, 24);
+$ipHash = grc_ip_hash($cfg);
 
 if ($perIpHourly > 0 && !bump_counter("$rlDir/ip-$ipHash-$hour.cnt", $perIpHourly)) {
-    respond(429, ['error' => 'Hourly AI limit reached for your connection — showing the demo engine instead.', 'fallback' => 'demo']);
+    fail($cfg, 'rate_limited_ip', 429, ['error' => 'Hourly AI limit reached for your connection — showing the demo engine instead.', 'fallback' => 'demo']);
 }
 if ($dailyLimit > 0 && !bump_counter("$rlDir/day-$day.cnt", $dailyLimit)) {
-    respond(429, ['error' => 'Daily AI limit reached — showing the demo engine instead.', 'fallback' => 'demo']);
+    fail($cfg, 'rate_limited_daily', 429, ['error' => 'Daily AI limit reached — showing the demo engine instead.', 'fallback' => 'demo']);
 }
 if (mt_rand(1, 50) === 1) { // occasional cleanup of old counters
     foreach ((array) glob($rlDir . '/*.cnt') as $f) {
@@ -185,7 +133,7 @@ foreach ($catalogs as $file => $key) {
 }
 if ($context === '') {
     error_log('[grcaudit] framework catalogs missing in ' . __DIR__ . '/frameworks');
-    respond(500, ['error' => 'Framework catalogs are missing on the server.', 'fallback' => 'demo']);
+    fail($cfg, 'catalog_missing', 500, ['error' => 'Framework catalogs are missing on the server.', 'fallback' => 'demo']);
 }
 
 $instructions = <<<'PROMPT'
@@ -303,14 +251,14 @@ curl_close($ch);
 
 if ($resp === false || $code >= 400) {
     error_log('[grcaudit] Anthropic call failed: HTTP ' . $code . ' ' . $curlErr . ' ' . substr((string) $resp, 0, 500));
-    respond(502, ['error' => 'AI analysis is temporarily unavailable.', 'fallback' => 'demo']);
+    fail($cfg, 'ai_error', 502, ['error' => 'AI analysis is temporarily unavailable.', 'fallback' => 'demo']);
 }
 
 $data = json_decode((string) $resp, true);
 $stop = is_array($data) ? (string) ($data['stop_reason'] ?? '') : '';
 if ($stop === 'refusal' || $stop === 'max_tokens') {
     error_log('[grcaudit] Anthropic stop_reason=' . $stop);
-    respond(502, ['error' => 'AI analysis did not complete.', 'fallback' => 'demo']);
+    fail($cfg, 'ai_incomplete', 502, ['error' => 'AI analysis did not complete.', 'fallback' => 'demo']);
 }
 
 $text = '';
@@ -330,8 +278,18 @@ if (!is_array($result)) {
 }
 if (!is_array($result) || !isset($result['grounded_frameworks'])) {
     error_log('[grcaudit] invalid model output: ' . substr($text, 0, 300));
-    respond(502, ['error' => 'AI returned an invalid result.', 'fallback' => 'demo']);
+    fail($cfg, 'invalid_output', 502, ['error' => 'AI returned an invalid result.', 'fallback' => 'demo']);
 }
+
+// Anonymous indicators: structured fields and catalog-verified IDs only — never the incident text.
+grc_metrics_record($cfg, [
+    'source'      => 'llm',
+    'scenario'    => grc_scenario(is_array($body) ? ($body['archetype'] ?? null) : null, __DIR__),
+    'input_chars' => $len,
+    'latency_ms'  => (int) round((microtime(true) - $started) * 1000),
+    'model'       => (string) ($data['model'] ?? $model),
+    'usage'       => $data['usage'] ?? null,
+], $result, __DIR__ . '/frameworks');
 
 // The browser verifies every cited control ID against the catalogs (green "Grounded" badge).
 respond(200, ['source' => 'llm', 'model' => (string) ($data['model'] ?? $model), 'result' => $result]);

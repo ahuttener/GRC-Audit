@@ -1,0 +1,218 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "GRC Audit Indicators API",
+    "version": "1.0.0",
+    "description": "Read-only, aggregated KPIs and Key Risk Indicators of every incident analysed in GRC Audit (cybersecinfo.com/grcaudit). Privacy by design: only structured fields are stored (severity, failure category, risk strategy, catalog-verified control IDs, counts) - never incident text, titles or IP addresses. Ratios are 0-1 and null when there is no data.",
+    "license": { "name": "MIT", "url": "https://github.com/ahuttener/GRC-Audit/blob/main/LICENSE" },
+    "contact": { "name": "CyberSecInfo", "url": "https://cybersecinfo.com" }
+  },
+  "servers": [{ "url": "https://cybersecinfo.com/grcaudit/api" }],
+  "paths": {
+    "/indicators.php": {
+      "get": {
+        "operationId": "getIndicators",
+        "summary": "KPIs, KRIs, risk distributions and control coverage for a time window",
+        "parameters": [
+          {
+            "name": "dataset",
+            "in": "query",
+            "description": "live = every incident audited on the site; examples = baseline built from the curated example library on the GRC Audit page (ignores days).",
+            "schema": { "type": "string", "enum": ["live", "examples"], "default": "live" }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "description": "Window ending today (UTC).",
+            "schema": { "type": "string", "enum": ["7", "30", "90", "365", "all"], "default": "30" }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["json", "csv"], "default": "json" }
+          },
+          {
+            "name": "table",
+            "in": "query",
+            "description": "CSV table (format=csv only): summary = metric,value; daily = one row per day; controls = framework,control_id,name,citations; scenarios = curated example runs.",
+            "schema": { "type": "string", "enum": ["summary", "daily", "controls", "scenarios"], "default": "summary" }
+          }
+        ],
+        "security": [{}, { "bearer": [] }, { "apiKey": [] }],
+        "responses": {
+          "200": {
+            "description": "Indicators. With a valid token, operations.usage (token usage, prompt-cache hit ratio, per-model counts) is included.",
+            "headers": { "Cache-Control": { "schema": { "type": "string", "example": "public, max-age=60" } } },
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Indicators" } },
+              "text/csv": { "schema": { "type": "string" } }
+            }
+          },
+          "400": { "description": "Invalid parameter.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "401": { "description": "Invalid API token.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "429": { "description": "Too many requests from this client.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "503": { "description": "Storage temporarily unavailable.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearer": { "type": "http", "scheme": "bearer", "description": "Optional. Unlocks the operational usage block." },
+      "apiKey": { "type": "apiKey", "in": "header", "name": "X-API-Key", "description": "Optional alternative to the bearer header." }
+    },
+    "schemas": {
+      "Ratio": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+      "Ranked": {
+        "type": "object",
+        "required": ["key", "count", "share"],
+        "properties": { "key": { "type": "string" }, "count": { "type": "integer" }, "share": { "$ref": "#/components/schemas/Ratio" } }
+      },
+      "Kri": {
+        "type": "object",
+        "required": ["id", "name", "value", "unit", "better", "appetite", "tolerance", "status"],
+        "properties": {
+          "id": { "type": "string", "example": "KRI-01" },
+          "name": { "type": "string", "example": "Grounding rate" },
+          "description": { "type": "string" },
+          "value": { "type": ["number", "null"] },
+          "unit": { "type": "string", "enum": ["ratio", "ms"] },
+          "better": { "type": "string", "enum": ["higher", "lower"] },
+          "appetite": { "type": "number", "description": "Target: within risk appetite (green)." },
+          "tolerance": { "type": "number", "description": "Maximum acceptable deviation (amber); beyond it the KRI is red." },
+          "status": { "type": "string", "enum": ["green", "amber", "red", "no_data"] }
+        }
+      },
+      "Framework": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string", "enum": ["iso_27001_2022", "nist_csf_2", "soc_2", "gdpr", "ccpa_cpra", "hipaa", "aiuc_1"] },
+          "label": { "type": "string" },
+          "catalog_size": { "type": "integer" },
+          "applicable_analyses": { "type": "integer" },
+          "applicability_rate": { "$ref": "#/components/schemas/Ratio" },
+          "citations": { "type": "integer" },
+          "unverified_citations": { "type": "integer" },
+          "avg_citations_when_applicable": { "type": ["number", "null"] },
+          "distinct_controls_cited": { "type": "integer" },
+          "catalog_coverage": { "$ref": "#/components/schemas/Ratio" },
+          "never_cited": { "type": "integer" },
+          "top_controls": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "count": { "type": "integer" },
+                "share_of_applicable": { "$ref": "#/components/schemas/Ratio" }
+              }
+            }
+          }
+        }
+      },
+      "Indicators": {
+        "type": "object",
+        "required": ["api", "version", "generated_at", "window", "kpis", "daily", "risk", "frameworks", "kri"],
+        "properties": {
+          "api": { "type": "string" },
+          "version": { "type": "integer" },
+          "generated_at": { "type": "string", "format": "date-time" },
+          "window": {
+            "type": "object",
+            "properties": {
+              "days": { "oneOf": [{ "type": "integer" }, { "const": "all" }] },
+              "from": { "type": ["string", "null"], "format": "date" },
+              "to": { "type": "string", "format": "date" }
+            }
+          },
+          "privacy": { "type": "string" },
+          "kpis": {
+            "type": "object",
+            "properties": {
+              "analyses": { "type": "integer" },
+              "ai_analyses": { "type": "integer" },
+              "demo_analyses": { "type": "integer" },
+              "ai_share": { "$ref": "#/components/schemas/Ratio" },
+              "custom_incident_share": { "$ref": "#/components/schemas/Ratio" },
+              "high_critical_rate": { "$ref": "#/components/schemas/Ratio" },
+              "grounded_rate": { "$ref": "#/components/schemas/Ratio" },
+              "unverified_citation_rate": { "$ref": "#/components/schemas/Ratio" },
+              "avg_controls_per_analysis": { "type": ["number", "null"] },
+              "catalog_coverage": { "$ref": "#/components/schemas/Ratio" },
+              "breach_notification_rate": { "$ref": "#/components/schemas/Ratio" },
+              "ai_system_involvement_rate": { "$ref": "#/components/schemas/Ratio" },
+              "avg_evidence_items": { "type": ["number", "null"] },
+              "active_days": { "type": "integer" },
+              "avg_analyses_per_active_day": { "type": ["number", "null"] }
+            }
+          },
+          "daily": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "day": { "type": "string", "format": "date" },
+                "total": { "type": "integer" },
+                "ai": { "type": "integer" },
+                "demo": { "type": "integer" },
+                "high_critical": { "type": "integer" },
+                "ai_rate_limited": { "type": "integer" }
+              }
+            }
+          },
+          "risk": {
+            "type": "object",
+            "properties": {
+              "severity": { "type": "array", "items": { "$ref": "#/components/schemas/Ranked" } },
+              "failure_category": { "type": "array", "items": { "$ref": "#/components/schemas/Ranked" } },
+              "risk_strategy": { "type": "array", "items": { "$ref": "#/components/schemas/Ranked" } },
+              "severity_by_category": {
+                "type": "object",
+                "additionalProperties": { "type": "object", "additionalProperties": { "type": "integer" } }
+              }
+            }
+          },
+          "frameworks": { "type": "array", "items": { "$ref": "#/components/schemas/Framework" } },
+          "control_families": {
+            "type": "object",
+            "properties": {
+              "iso_themes": { "type": "array", "items": { "$ref": "#/components/schemas/Ranked" } },
+              "nist_functions": { "type": "array", "items": { "$ref": "#/components/schemas/Ranked" } },
+              "soc2_series": { "type": "array", "items": { "$ref": "#/components/schemas/Ranked" } }
+            }
+          },
+          "scenarios": {
+            "type": "object",
+            "properties": {
+              "scenario_runs": { "type": "integer" },
+              "custom_incidents": { "type": "integer" },
+              "distinct_scenarios": { "type": "integer" },
+              "top": { "type": "array", "items": { "$ref": "#/components/schemas/Ranked" } }
+            }
+          },
+          "operations": {
+            "type": "object",
+            "properties": {
+              "ai_attempts": { "type": "integer" },
+              "ai_success_rate": { "$ref": "#/components/schemas/Ratio" },
+              "demo_fallbacks": { "type": "integer" },
+              "ai_not_completed": { "type": "object", "additionalProperties": { "type": "integer" } },
+              "latency_ms": {
+                "type": "object",
+                "properties": {
+                  "p50": { "type": ["integer", "null"] },
+                  "p95": { "type": ["integer", "null"] },
+                  "avg": { "type": ["integer", "null"] }
+                }
+              },
+              "avg_input_chars": { "type": ["integer", "null"] }
+            }
+          },
+          "kri": { "type": "array", "items": { "$ref": "#/components/schemas/Kri" } }
+        }
+      },
+      "Error": { "type": "object", "required": ["error"], "properties": { "error": { "type": "string" } } }
+    }
+  }
+}

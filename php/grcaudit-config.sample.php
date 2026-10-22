@@ -27,4 +27,12 @@ return [
 
     // Only pages on these origins may call the endpoint from a browser.
     'ALLOWED_ORIGINS' => ['https://cybersecinfo.com', 'https://www.cybersecinfo.com'],
+
+    // Indicators API (api/indicators.php). The anonymous metrics database lives next to this file,
+    // in grcaudit-data/metrics.sqlite (outside public_html); override with METRICS_DB.
+    // 'METRICS_DB' => '/home/USER/domains/cybersecinfo.com/grcaudit-data/metrics.sqlite',
+    // Optional token (24+ characters) that unlocks token usage / cache stats in the API:
+    // 'METRICS_TOKEN' => 'a-long-random-string-of-at-least-24-chars',
+    'TRACK_PER_IP_HOURLY' => 30,   // demo analyses recorded per visitor per hour
+    'TRACK_DAILY_LIMIT'   => 1000, // demo analyses recorded per day for the whole site
 ];

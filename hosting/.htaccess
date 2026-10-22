@@ -11,6 +11,17 @@ RedirectMatch 404 /\.(git|github)(/|$)
   Require all denied
 </FilesMatch>
 
+# Shared PHP libraries (e.g. api/_metrics-lib.php) are included, never requested directly
+<FilesMatch "^_.*\.php$">
+  Require all denied
+</FilesMatch>
+
+# Metrics database, API caches and rate-limit counters (they normally live outside public_html)
+<FilesMatch "\.(sqlite|sqlite-journal|cnt)$">
+  Require all denied
+</FilesMatch>
+RedirectMatch 404 /grcaudit-data(/|$)
+
 # Security headers
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
