@@ -9,12 +9,15 @@ import {
   FileJson,
   Lock,
   MinusCircle,
+  FileText,
   RefreshCw,
   XOctagon,
 } from "lucide-react";
 import type { Indicators, Kri, KriStatus } from "@/types/indicators";
 import { SCENARIOS } from "@/data/scenarios";
 import { BarList, DailyChart, HeatMap, Panel, num, pct } from "./Charts";
+import { emblemUrl, printHtml } from "@/lib/printHtml";
+import { toIndicatorsReportHtml } from "@/lib/toIndicatorsReportHtml";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
 // Set by the Hostinger bundle (the API is PHP). Elsewhere (e.g. the GitHub Pages mirror) the
@@ -260,7 +263,7 @@ export default function IndicatorsDashboard() {
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-3 text-xs text-slate-500">
+        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
           {data ? <span>Updated {new Date(data.generated_at).toLocaleString("en-GB")}</span> : null}
           <button
             type="button"
@@ -269,6 +272,27 @@ export default function IndicatorsDashboard() {
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} aria-hidden="true" />
             Refresh
+          </button>
+          <button
+            type="button"
+            disabled={!data || loading || Boolean(error)}
+            onClick={() =>
+              data &&
+              printHtml(
+                toIndicatorsReportHtml(data, {
+                  logoUrl: emblemUrl(),
+                  // Label from the data itself, never from a filter that may still be loading.
+                  datasetLabel:
+                    data.dataset === "examples"
+                      ? `Example library (${data.kpis.analyses} incidents)`
+                      : `Live usage · ${WINDOWS.find((w) => w.key === String(data.window.days))?.label ?? data.window.days}`,
+                }),
+              )
+            }
+            className="inline-flex items-center gap-1.5 rounded-lg border border-accent/50 bg-accent/10 px-3 py-1.5 font-semibold text-accent transition-colors hover:bg-accent-strong hover:text-gray-900 disabled:opacity-40"
+          >
+            <FileText className="h-3.5 w-3.5" aria-hidden="true" />
+            Download KRI report (PDF)
           </button>
         </div>
       </div>

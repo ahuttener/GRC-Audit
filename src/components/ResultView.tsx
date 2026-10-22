@@ -4,7 +4,11 @@ import FrameworkMatrix from "./FrameworkMatrix";
 import EvidenceCard from "./EvidenceCard";
 import RemediationRoadmap from "./RemediationRoadmap";
 import ExportActions from "./ExportActions";
-import { Sparkles, Cpu, BadgeCheck, AlertTriangle, Target } from "lucide-react";
+import { Sparkles, Cpu, BadgeCheck, AlertTriangle, Target, BarChart3, ArrowRight } from "lucide-react";
+
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
+// Analyses are recorded only on the PHP deployment (see page.tsx / api/track.php).
+const TRACKED = Boolean(process.env.NEXT_PUBLIC_TRACK_URL);
 
 const STRAT: Record<string, string> = {
   MITIGATE: "bg-emerald-500/10 text-emerald-300 ring-1 ring-emerald-400/30",
@@ -88,6 +92,22 @@ export default function ResultView({ resp }: { resp: AuditResponse }) {
       </div>
 
       <ExportActions resp={resp} />
+
+      {/* Point straight to the dashboard this analysis just fed. */}
+      <a
+        href={`${BASE_PATH}/indicators/`}
+        className="group flex items-center gap-3 rounded-xl border border-accent/30 bg-accent/5 px-4 py-3 text-sm text-slate-300 transition-colors hover:border-accent/60 hover:bg-accent/10"
+      >
+        <BarChart3 className="h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+        <span className="min-w-0 flex-1">
+          <span className="font-semibold text-white">
+            {TRACKED ? "This incident now counts in the GRC Indicators." : "Explore the GRC Indicators."}
+          </span>{" "}
+          See how it moves the Key Risk Indicators, the risk heat map and the most-failed controls — and download the
+          KRI report.
+        </span>
+        <ArrowRight className="h-4 w-4 shrink-0 text-accent transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+      </a>
     </div>
   );
 }

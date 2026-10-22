@@ -47,6 +47,7 @@ export interface DailyPoint {
 export interface Indicators {
   api: string;
   version: number;
+  dataset?: "live" | "examples";
   generated_at: string;
   window: { days: number | "all"; from: string | null; to: string };
   privacy: string;

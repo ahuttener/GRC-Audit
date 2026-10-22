@@ -1,7 +1,7 @@
 import type { AuditResponse } from "@/types/grc";
 
 /** Escape text for HTML — every field may come from the LLM, so nothing is trusted. */
-function esc(s: unknown): string {
+export function esc(s: unknown): string {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")

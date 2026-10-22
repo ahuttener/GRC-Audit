@@ -6,7 +6,7 @@ import type { DailyPoint } from "@/types/indicators";
 export function pct(v: number | null | undefined, digits?: number): string {
   if (v === null || v === undefined) return "—";
   const p = v * 100;
-  return `${p.toFixed(digits ?? (p > 0 && p < 10 ? 1 : 0))}%`;
+  return `${p.toFixed(digits ?? (p > 0 && p < 9.95 ? 1 : 0))}%`;
 }
 
 export function num(v: number | null | undefined): string {

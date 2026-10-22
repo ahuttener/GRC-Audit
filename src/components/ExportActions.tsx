@@ -5,6 +5,7 @@ import { Copy, Download, Check, FileText } from "lucide-react";
 import type { AuditResponse } from "@/types/grc";
 import { toMarkdown } from "@/lib/toMarkdown";
 import { toReportHtml } from "@/lib/toReportHtml";
+import { emblemUrl, printHtml } from "@/lib/printHtml";
 
 export default function ExportActions({ resp }: { resp: AuditResponse }) {
   const [copied, setCopied] = useState(false);
@@ -33,35 +34,7 @@ export default function ExportActions({ resp }: { resp: AuditResponse }) {
   };
 
   // Print-ready report with the CyberSecInfo emblem; the print dialog saves it as a PDF.
-  // A hidden iframe avoids pop-up blockers and keeps the user on the page.
-  const printReport = () => {
-    const logo = `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH || ""}/emblem.png`;
-    const frame = document.createElement("iframe");
-    frame.setAttribute("aria-hidden", "true");
-    frame.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;";
-    document.body.appendChild(frame);
-    const doc = frame.contentDocument;
-    const win = frame.contentWindow;
-    if (!doc || !win) {
-      frame.remove();
-      return;
-    }
-    doc.open();
-    doc.write(toReportHtml(resp, logo));
-    doc.close();
-    const go = () => {
-      win.focus();
-      win.print();
-      setTimeout(() => frame.remove(), 1000);
-    };
-    const img = doc.images[0];
-    if (img && !img.complete) {
-      img.addEventListener("load", go, { once: true });
-      img.addEventListener("error", go, { once: true });
-    } else {
-      go();
-    }
-  };
+  const printReport = () => printHtml(toReportHtml(resp, emblemUrl()));
 
   return (
     <div className="flex flex-wrap gap-3">
