@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { Indicators, Kri } from "@/types/indicators";
 import { summarize, toIndicatorsReportHtml } from "@/lib/toIndicatorsReportHtml";
+import type { AuditResponse } from "@/types/grc";
+import { toCombinedReportHtml } from "@/lib/toCombinedReportHtml";
+import { isAuditResponse } from "@/lib/lastAudit";
+import { analyzeLocally } from "@/lib/analyzer";
+import { verify } from "@/lib/grounding";
 
 const kri = (id: string, status: Kri["status"], value: number | null): Kri => ({
   id,
@@ -126,5 +131,41 @@ describe("KRI report (PDF)", () => {
     expect(summarize(fixture(0))).toEqual([
       "No analyses were recorded in this period, so no indicator can be assessed yet.",
     ]);
+  });
+});
+
+describe("Complete PDF (incident + KRI report)", () => {
+  const incident = (title: string): AuditResponse => {
+    const result = analyzeLocally("A dismissed employee's account was never disabled and the password leaked.", "zombie-account");
+    return { source: "demo", verification: verify(result), result: { ...result, incident_title: title } };
+  };
+
+  it("puts the incident first and the KRI report on a new page, in one document", () => {
+    const html = toCombinedReportHtml(incident("Zombie account"), fixture(), { logoUrl: "e.png", datasetLabel: "Live usage · 30 days" });
+    expect(html.match(/<html/g)).toHaveLength(1);
+    expect(html.match(/<body>/g)).toHaveLength(1);
+    const a = html.indexOf("Grounded framework mapping");
+    const b = html.indexOf("Key Risk Indicator Report</h1>");
+    expect(a).toBeGreaterThan(0);
+    expect(b).toBeGreaterThan(a);
+    expect(html.indexOf('class="next-report"')).toBeLessThan(b);
+    expect(html).toContain(".sev { color: #fff; border: 0; background:"); // incident-only styles kept
+    expect(html).toContain("td.heat"); // KRI-only styles kept
+    expect(html).toContain("Live usage · 30 days");
+  });
+
+  it("escapes the incident title everywhere, including the document title", () => {
+    const html = toCombinedReportHtml(incident('</body><script>x()</script>'), fixture(), { logoUrl: "e.png", datasetLabel: "x" });
+    expect(html).not.toContain("<script>");
+    expect(html.match(/<\/body>/g)).toHaveLength(1);
+  });
+
+  it("only accepts a stored diagnosis with the full shape", () => {
+    expect(isAuditResponse(incident("ok"))).toBe(true);
+    expect(isAuditResponse(null)).toBe(false);
+    expect(isAuditResponse({ result: { incident_title: "x" } })).toBe(false);
+    const noPlan = incident("x") as unknown as { result: Record<string, unknown> };
+    delete noPlan.result.remediation_plan;
+    expect(isAuditResponse(noPlan)).toBe(false);
   });
 });

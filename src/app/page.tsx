@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import Header from "@/components/Header";
 import IncidentConsole from "@/components/IncidentConsole";
@@ -15,6 +15,7 @@ import type { AuditResponse } from "@/types/grc";
 import { analyzeLocally } from "@/lib/analyzer";
 import { verify } from "@/lib/grounding";
 import { buildTrackEvent, sendTrackEvent } from "@/lib/telemetry";
+import { saveLastAudit } from "@/lib/lastAudit";
 
 // Static builds run the grounded demo engine in the browser (no backend needed).
 // Set NEXT_PUBLIC_USE_API=1 on a Node/Vercel deploy to use the LLM API route instead.
@@ -34,6 +35,11 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [resp, setResp] = useState<AuditResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Lets the indicators page offer the complete PDF (this incident + the KRI report).
+  useEffect(() => {
+    if (resp) saveLastAudit(resp);
+  }, [resp]);
 
   const pick = (text: string, arch: string) => {
     setIncident(text);

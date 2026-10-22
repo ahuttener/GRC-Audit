@@ -18,6 +18,9 @@ import { SCENARIOS } from "@/data/scenarios";
 import { BarList, DailyChart, HeatMap, Panel, num, pct } from "./Charts";
 import { emblemUrl, printHtml } from "@/lib/printHtml";
 import { toIndicatorsReportHtml } from "@/lib/toIndicatorsReportHtml";
+import { toCombinedReportHtml } from "@/lib/toCombinedReportHtml";
+import { loadLastAudit } from "@/lib/lastAudit";
+import type { AuditResponse } from "@/types/grc";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
 // Set by the Hostinger bundle (the API is PHP). Elsewhere (e.g. the GitHub Pages mirror) the
@@ -173,6 +176,10 @@ export default function IndicatorsDashboard() {
   const [loading, setLoading] = useState(false);
   const [fw, setFw] = useState("iso_27001_2022");
   const [nonce, setNonce] = useState(0);
+  const [lastAudit, setLastAudit] = useState<AuditResponse | null>(null);
+
+  // Read after mount: sessionStorage does not exist in the static export's prerender.
+  useEffect(() => setLastAudit(loadLastAudit()), []);
 
   useEffect(() => {
     if (!API_URL) return;
@@ -212,9 +219,46 @@ export default function IndicatorsDashboard() {
 
   const k = data?.kpis;
   const selected = data?.frameworks.find((f) => f.key === fw);
+  const ready = Boolean(data) && !loading && !error;
+  // Label from the data itself, never from a filter that may still be loading.
+  const datasetLabel = (d: Indicators) =>
+    d.dataset === "examples"
+      ? `Example library (${d.kpis.analyses} incidents)`
+      : `Live usage · ${WINDOWS.find((w) => w.key === String(d.window.days))?.label ?? d.window.days}`;
 
   return (
     <div className="space-y-6">
+      {lastAudit ? (
+        <div className="flex flex-col gap-3 rounded-2xl border border-accent/50 bg-accent/10 p-4 shadow-[0_0_32px_-12px_rgba(6,182,212,0.6)] sm:flex-row sm:items-center sm:p-5">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent">
+            <FileText className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-accent">Your incident</p>
+            <p className="font-semibold text-white">
+              {lastAudit.result.incident_title}{" "}
+              <span className="font-normal text-slate-400">· {lastAudit.result.severity_level}</span>
+            </p>
+            <p className="mt-0.5 text-sm leading-relaxed text-slate-300">
+              Download the complete PDF with both reports: your incident audit followed by the KRI report
+              {data ? <> ({datasetLabel(data)})</> : null}.
+            </p>
+          </div>
+          <button
+            type="button"
+            disabled={!ready}
+            onClick={() =>
+              data &&
+              printHtml(toCombinedReportHtml(lastAudit, data, { logoUrl: emblemUrl(), datasetLabel: datasetLabel(data) }))
+            }
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-accent-strong px-5 py-2.5 text-sm font-bold uppercase tracking-[0.05em] text-gray-900 transition-colors hover:bg-accent disabled:opacity-40"
+          >
+            <Download className="h-4 w-4" aria-hidden="true" />
+            Download complete PDF
+          </button>
+        </div>
+      ) : null}
+
       <div role="tablist" aria-label="Dataset" className="grid gap-2 sm:grid-cols-2">
         {DATASETS.map((d) => (
           <button
@@ -275,19 +319,9 @@ export default function IndicatorsDashboard() {
           </button>
           <button
             type="button"
-            disabled={!data || loading || Boolean(error)}
+            disabled={!ready}
             onClick={() =>
-              data &&
-              printHtml(
-                toIndicatorsReportHtml(data, {
-                  logoUrl: emblemUrl(),
-                  // Label from the data itself, never from a filter that may still be loading.
-                  datasetLabel:
-                    data.dataset === "examples"
-                      ? `Example library (${data.kpis.analyses} incidents)`
-                      : `Live usage · ${WINDOWS.find((w) => w.key === String(data.window.days))?.label ?? data.window.days}`,
-                }),
-              )
+              data && printHtml(toIndicatorsReportHtml(data, { logoUrl: emblemUrl(), datasetLabel: datasetLabel(data) }))
             }
             className="inline-flex items-center gap-1.5 rounded-lg border border-accent/50 bg-accent/10 px-3 py-1.5 font-semibold text-accent transition-colors hover:bg-accent-strong hover:text-gray-900 disabled:opacity-40"
           >

@@ -18,8 +18,8 @@ export default function IndicatorsCta() {
             : "Diagnosis complete — see how incidents add up in the GRC Indicators."}
         </p>
         <p className="mt-0.5 text-sm leading-relaxed text-slate-300">
-          See how it moves the Key Risk Indicators, the risk heat map and the most-failed controls, and download the KRI
-          report (PDF).
+          See how it moves the Key Risk Indicators, the risk heat map and the most-failed controls — and download the
+          complete PDF with both reports: this incident plus the KRI report.
         </p>
       </div>
       <a
