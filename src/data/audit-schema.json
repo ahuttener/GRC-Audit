@@ -98,9 +98,19 @@
           },
           "required": ["requirements", "name", "audit_finding"],
           "additionalProperties": false
+        },
+        "dora": {
+          "type": "object",
+          "properties": {
+            "article": { "type": "string" },
+            "name": { "type": "string" },
+            "regulatory_risk": { "type": "string" }
+          },
+          "required": ["article", "name", "regulatory_risk"],
+          "additionalProperties": false
         }
       },
-      "required": ["iso_27001_2022", "soc_2", "gdpr", "ccpa_cpra", "hipaa", "nist_csf_2", "aiuc_1"],
+      "required": ["iso_27001_2022", "soc_2", "gdpr", "ccpa_cpra", "hipaa", "nist_csf_2", "aiuc_1", "dora"],
       "additionalProperties": false
     },
     "audit_evidence_required": { "type": "array", "items": { "type": "string" } },

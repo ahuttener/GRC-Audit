@@ -28,6 +28,9 @@ type Archetype =
   | "non-human-identity"
   | "sod-conflict"
   | "backup-dr-failure"
+  | "dora-cloud-outage"
+  | "dora-payments-outage"
+  | "dora-insurer-ransomware"
   | "generic";
 
 // Bilingual (EN + PT-BR) keyword hints so typed incidents classify in demo mode.
@@ -101,6 +104,14 @@ const KEYWORDS: Record<Exclude<Archetype, "generic">, string[]> = {
   "backup-dr-failure": ["disaster recovery", "business continuity", "backups had not", "backup job",
     "backup storage", "failing silently", "never been tested", "never tested", "rto or rpo", "rto and rpo", "rto/rpo", "failover",
     "restore", "power failure", "region outage", "dr plan", "recovery plan"],
+  "dora-cloud-outage": ["dora", "cloud provider", "only cloud", "single cloud", "register of information",
+    "exit strategy", "audit or access rights", "central bank", "online banking", "mobile banking",
+    "internet banking", "provedor de nuvem", "estratégia de saída"],
+  "dora-payments-outage": ["dora", "payment institution", "card payments", "card authorisation", "card authorization",
+    "classified as major", "major ict", "payments failed", "pagamentos com cartão", "instituição de pagamento",
+    "e-money", "authorisation platform"],
+  "dora-insurer-ransomware": ["dora", "insurer", "insurance company", "insurance supervisor", "claims platform",
+    "policyholder", "seguradora", "segurados", "file transfer server", "never been penetration tested"],
 };
 
 export function classify(incident: string): Archetype {
@@ -854,6 +865,105 @@ const CURATED: Record<Exclude<Archetype, "generic">, AuditResult> = {
         "Check whether any personal data was permanently lost or corrupted during the rebuild — if so, assess it as a personal data breach (GDPR Art. 33, 72 hours) — and review contractual SLAs with payroll clients for penalties or notice duties.",
       step_3_permanent_fix:
         "Monitor every backup job with alerts on failure or missed runs, keep immutable off-site copies, set and approve RTO/RPO targets from a business impact analysis, add redundant or secondary-site capacity, and test restores and the DR plan at least annually.",
+    },
+  },
+  "dora-cloud-outage": {
+    incident_title: "Nine-Hour Banking Outage Caused by a Single Cloud Provider",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via a DORA-compliant ICT third-party risk programme: contract terms, register of information, exit plan and tested failover" },
+    incident_summary:
+      "A regional outage at the bank's only cloud provider took online and mobile banking down for nine hours. The bank had no exit strategy, no tested failover, a contract without audit rights that was missing from its register of information, and it notified the major ICT-related incident to the Central Bank of Ireland late.",
+    severity_level: "Critical",
+    failure_category: "Third-Party Risk",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "GV.SC-05, GV.SC-07, GV.SC-10, ID.RA-01, RC.RP-01, RS.CO-02", function_name: "GOVERN & RECOVER — Supply Chain Risk Management and Recovery Plan Execution" },
+      iso_27001_2022: { control_id: "A.5.19 & A.5.20 & A.5.23 & A.5.30 & A.8.14", control_name: "Information security in supplier relationships / Addressing information security within supplier agreements / Information security for use of cloud services / ICT readiness for business continuity / Redundancy of information processing facilities", category: "Organizational & Technological", audit_finding: "Major non-conformity: cloud supplier risk was not managed (A.5.19, A.5.23), the agreement lacked audit and exit terms (A.5.20), and no tested continuity or redundant capacity existed for a critical service (A.5.30, A.8.14)." },
+      soc_2: { criteria: "CC9.2, A1.2, CC7.5", name: "Vendor and business partner risk / Recovery infrastructure / Recovery from incidents", audit_finding: "Exception: the dependency on a single vendor was not assessed and the recovery infrastructure supporting availability commitments did not exist." },
+      gdpr: { article: "Art. 32", name: "Security of processing (availability and resilience)", regulatory_risk: "Customers could not reach their data for nine hours, but none was accessed or lost, so it is not a personal data breach — Art. 33 does not apply. Art. 32(1)(b)-(c) resilience and timely restoration duties still apply." },
+      ccpa_cpra: { section: "N/A", name: "CCPA/CPRA", regulatory_risk: "Not applicable — an Irish bank serving EU customers, with no California residents' data in scope." },
+      hipaa: { rule: "N/A", name: "HIPAA", regulatory_risk: "Not applicable — no ePHI is involved." },
+      dora: { article: "Art. 28 & Art. 29 & Art. 30 & Art. 11 & Art. 19", name: "General principles (ICT third-party risk) / Concentration risk / Key contractual provisions / Response and recovery / Reporting of major ICT-related incidents", regulatory_risk: "Breach of DORA: the register of information and exit strategy required by Art. 28 were missing, concentration risk was never assessed (Art. 29), the contract lacked the mandatory audit and access rights (Art. 30), the ICT business continuity and recovery plans were not tested (Art. 11), and the initial notification to the Central Bank was late (Art. 19). The Central Bank can impose administrative penalties and remedial measures (Art. 50)." },
+    },
+    audit_evidence_required: [
+      "The DORA register of information on ICT third-party contractual arrangements, and the date the cloud contract was (or was not) added.",
+      "The cloud services contract and any addendum, showing service locations, availability levels, audit and access rights and termination/exit clauses.",
+      "The ICT third-party risk strategy, the concentration-risk assessment and the documented exit strategy for the cloud provider.",
+      "The ICT business continuity policy, response and recovery plans, and results of the last failover test.",
+      "Incident classification record and timestamps of the initial, intermediate and final reports sent to the Central Bank of Ireland.",
+      "Customer communication log and complaints recorded during the outage.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Restore service as the provider recovers, put customers on alternative channels (branch, phone), publish status updates and send the overdue initial notification to the Central Bank with an explanation of the delay.",
+      step_2_leak_and_legal:
+        "Confirm that no personal data was lost or exposed (so GDPR Art. 33 is not triggered), then file the DORA intermediate and final reports on time, with root cause, impact and lessons learned, and review customer redress obligations.",
+      step_3_permanent_fix:
+        "Add the contract to the register of information, renegotiate it with the Art. 30 mandatory terms, assess concentration risk, design and test a multi-region or multi-provider failover and a documented exit plan, and test it in the yearly resilience testing programme (Art. 24-25).",
+    },
+  },
+  "dora-payments-outage": {
+    incident_title: "Untested Change Causes a Six-Hour Card Payments Outage",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via enforced change management, a 24/7 incident classification process and an exercised ICT business continuity plan" },
+    incident_summary:
+      "An untested Friday-evening configuration change broke card authorisation for six hours for about 300,000 customers. The incident was classified as major only on Monday, so the regulator and customers were informed late, the continuity plan had never been exercised and no post-incident review followed.",
+    severity_level: "High",
+    failure_category: "Business Continuity & Resilience",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "PR.PS-01, ID.RA-07, RS.MA-02, RS.CO-02, RC.RP-01, ID.IM-02", function_name: "PROTECT & RESPOND — Configuration and Change Management, Incident Triage and Reporting" },
+      iso_27001_2022: { control_id: "A.8.32 & A.8.9 & A.5.25 & A.5.26 & A.5.27 & A.5.30", control_name: "Change management / Configuration management / Assessment and decision on information security events / Response to information security incidents / Learning from information security incidents / ICT readiness for business continuity", category: "Technological & Organizational", audit_finding: "Non-conformity: the change bypassed testing and approval (A.8.32, A.8.9), the event was not assessed and escalated in time (A.5.25, A.5.26), no lessons were captured (A.5.27) and continuity readiness was never exercised (A.5.30)." },
+      soc_2: { criteria: "CC8.1, CC7.4, CC7.5, A1.2", name: "Change management / Incident response / Recovery from incidents / Recovery infrastructure", audit_finding: "Exception: an unauthorised, untested change reached production and incident response did not operate outside business hours." },
+      gdpr: { article: "Art. 32", name: "Security of processing (availability and resilience)", regulatory_risk: "No personal data was accessed or lost, so Art. 33 / Art. 34 do not apply; the outage is an availability failure under Art. 32(1)(b)-(c)." },
+      ccpa_cpra: { section: "N/A", name: "CCPA/CPRA", regulatory_risk: "Not applicable — an EU payment institution with no California residents' data in scope." },
+      hipaa: { rule: "N/A", name: "HIPAA", regulatory_risk: "Not applicable — no ePHI is involved." },
+      dora: { article: "Art. 9 & Art. 11 & Art. 13 & Art. 17 & Art. 18 & Art. 19 & Art. 23", name: "Protection and prevention / Response and recovery / Learning and evolving / ICT-related incident management process / Classification of ICT-related incidents / Reporting of major ICT-related incidents / Payment-related incidents", regulatory_risk: "Breach of DORA: change management did not control the release (Art. 9(4)(e)), the continuity plan was untested (Art. 11), no post-incident review took place (Art. 13), the incident process and classification failed outside working hours (Art. 17, Art. 18), and the major-incident notification and client information were late (Art. 19, Art. 23 for payment institutions)." },
+    },
+    audit_evidence_required: [
+      "The change ticket, approval record, test evidence and deployment log for the configuration change.",
+      "The ICT-related incident management procedure, on-call rota and the classification decision with its timestamps.",
+      "Copies and timestamps of the initial, intermediate and final reports sent to the competent authority, and of customer notices.",
+      "Payment authorisation logs showing the start, scope and end of the outage, and the number of customers and transactions affected.",
+      "The ICT business continuity plan and evidence of its last exercise.",
+      "The post-incident review (once completed) with root cause and corrective actions.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Roll back the change, confirm that authorisations work end to end, freeze non-urgent changes and send the overdue notifications to the competent authority and to affected customers.",
+      step_2_leak_and_legal:
+        "Confirm that no payment or personal data was lost or exposed, then submit the DORA intermediate and final reports with the classification criteria met (clients affected, duration, economic impact) and handle refunds for failed or duplicate transactions.",
+      step_3_permanent_fix:
+        "Enforce change approval and pre-production testing with automated rollback, set up 24/7 incident classification against the DORA criteria, exercise the ICT business continuity plan at least yearly and run a post-incident review after every major incident.",
+    },
+  },
+  "dora-insurer-ransomware": {
+    incident_title: "Ransomware and Data Theft at an EU Insurer",
+    recommended_strategy: { strategy: "MITIGATE", rationale: "via patching of exposed systems, isolated immutable backups, a resilience testing programme and clear regulatory reporting ownership" },
+    incident_summary:
+      "Attackers used an unpatched file transfer server to steal policyholder personal and medical claims data and encrypt the claims platform for four days. Backups were encrypted too, critical systems had never been penetration tested and nobody owned the report to the insurance supervisor.",
+    severity_level: "Critical",
+    failure_category: "Vulnerability Management",
+    grounded_frameworks: {
+      nist_csf_2: { subcategories: "ID.RA-01, PR.PS-02, PR.DS-11, DE.CM-01, RS.MA-01, RS.CO-02, RC.RP-01", function_name: "IDENTIFY, PROTECT & RESPOND — Vulnerability Management, Backups and Incident Management" },
+      iso_27001_2022: { control_id: "A.8.8 & A.8.13 & A.8.22 & A.8.29 & A.5.24 & A.5.26 & A.5.31", control_name: "Management of technical vulnerabilities / Information backup / Segregation of networks / Security testing in development and acceptance / Information security incident management planning and preparation / Response to information security incidents / Legal, statutory, regulatory and contractual requirements", category: "Technological & Organizational", audit_finding: "Major non-conformity: an internet-facing server was left unpatched (A.8.8), backups were reachable from the production network (A.8.13, A.8.22), critical systems were never security tested (A.8.29), and incident and regulatory reporting roles were undefined (A.5.24, A.5.26, A.5.31)." },
+      soc_2: { criteria: "CC7.1, CC6.6, A1.2, CC7.4", name: "Vulnerability detection / Boundary protection / Backup and recovery / Incident response", audit_finding: "Exception: known vulnerabilities were not remediated, backups were not protected from the production environment and incident response lacked defined ownership." },
+      gdpr: { article: "Art. 32 & Art. 33 & Art. 34 & Art. 9", name: "Security of processing / Notification to the supervisory authority / Communication to data subjects / Special categories (health data)", regulatory_risk: "Personal and medical claims data was exfiltrated: a personal data breach involving health data, which must be notified to the supervisory authority within 72 hours (Art. 33) and to policyholders without undue delay given the high risk (Art. 34)." },
+      ccpa_cpra: { section: "N/A", name: "CCPA/CPRA", regulatory_risk: "Not applicable — an EU insurer with no California residents' data in scope." },
+      hipaa: { rule: "N/A", name: "HIPAA", regulatory_risk: "Not applicable — an EU insurer is not a US covered entity; GDPR Art. 9 governs the health data." },
+      dora: { article: "Art. 9 & Art. 10 & Art. 11 & Art. 12 & Art. 17 & Art. 19 & Art. 24 & Art. 25", name: "Protection and prevention / Detection / Response and recovery / Backup policies and restoration / ICT-related incident management / Reporting of major ICT-related incidents / Resilience testing / Testing of ICT tools and systems", regulatory_risk: "Breach of DORA: patching and protection failed (Art. 9), the intrusion was not detected before encryption (Art. 10), backups were not segregated or restorable (Art. 11, Art. 12), the incident process had no reporting owner (Art. 17) and the major incident must be reported to the insurance supervisor (Art. 19). Critical systems were never tested (Art. 24, Art. 25)." },
+    },
+    audit_evidence_required: [
+      "Vulnerability scan and patch records for the file transfer server, including when the exploited vulnerability was published and patched.",
+      "Backup architecture, network segregation diagrams and the results of the last restore test.",
+      "The digital operational resilience testing programme and any penetration test reports for critical systems.",
+      "Detection and alert logs (EDR, SIEM) for the intrusion window and the exfiltration volume.",
+      "Incident response plan showing roles for regulatory reporting, plus the DORA reports and the GDPR breach notification with timestamps.",
+      "Inventory of the stolen data (policyholder and medical claims records) and the communication sent to affected policyholders.",
+    ],
+    remediation_plan: {
+      step_1_containment:
+        "Isolate the file transfer server and affected network segments, revoke exposed credentials, preserve forensic evidence, restore the claims platform from a clean, verified copy and name an owner for regulatory reporting immediately.",
+      step_2_leak_and_legal:
+        "Scope the stolen data, notify the data protection authority within 72 hours (GDPR Art. 33) and policyholders (Art. 34), and send the DORA initial, intermediate and final reports to the insurance supervisor; engage the insurer's own cyber insurer and legal counsel.",
+      step_3_permanent_fix:
+        "Patch internet-facing systems within defined SLAs, keep immutable, segregated backups with regular restore tests, run a yearly resilience testing programme with penetration tests of critical systems (TLPT under Art. 26 if required by the supervisor) and document reporting roles in the incident plan.",
     },
   },
 };

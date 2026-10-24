@@ -5,6 +5,7 @@ import hipaa from "@/data/frameworks/hipaa-security-privacy.json";
 import soc from "@/data/frameworks/soc-2-tsc.json";
 import ccpa from "@/data/frameworks/ccpa-cpra.json";
 import aiuc from "@/data/frameworks/aiuc-1.json";
+import dora from "@/data/frameworks/dora.json";
 
 interface Cat {
   framework: string;
@@ -12,7 +13,7 @@ interface Cat {
   source_url: string;
 }
 
-const CATS: Cat[] = [nist, iso, soc, gdpr, ccpa, hipaa, aiuc] as unknown as Cat[];
+const CATS: Cat[] = [nist, iso, soc, gdpr, ccpa, hipaa, aiuc, dora] as unknown as Cat[];
 
 // Direct official download/text per source, plus whether it is free. Keyed by source_url.
 const DOWNLOAD: Record<string, { free: boolean; url: string; label: string }> = {
@@ -50,6 +51,11 @@ const DOWNLOAD: Record<string, { free: boolean; url: string; label: string }> = 
     free: true,
     url: "https://standard.aiuc-1.com/",
     label: "Official standard",
+  },
+  "https://eur-lex.europa.eu/eli/reg/2022/2554/oj": {
+    free: true,
+    url: "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022R2554",
+    label: "Official PDF",
   },
 };
 

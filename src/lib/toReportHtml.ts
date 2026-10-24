@@ -42,6 +42,12 @@ export function toReportHtml(resp: AuditResponse, logoUrl: string, generatedAt: 
       gf.aiuc_1?.name ?? "AI agent standard",
       gf.aiuc_1?.audit_finding ?? "Not applicable — no AI system or agent is involved.",
     ],
+    [
+      "DORA (EU financial sector)",
+      gf.dora?.article ?? "N/A",
+      gf.dora?.name ?? "Digital operational resilience",
+      gf.dora?.regulatory_risk ?? "Not applicable — not an EU financial entity.",
+    ],
   ];
 
   return `<!doctype html>

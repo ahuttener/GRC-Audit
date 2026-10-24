@@ -6,7 +6,7 @@ export default function Footer() {
       <a href="https://cybersecinfo.com" className="text-accent hover:underline">
         CyberSecInfo
       </a>{" "}
-      · grounded against embedded NIST, ISO 27001, SOC 2, GDPR, CCPA/CPRA, HIPAA &amp; AIUC-1 catalogs ·
+      · grounded against embedded NIST, ISO 27001, SOC 2, GDPR, CCPA/CPRA, HIPAA, AIUC-1 &amp; DORA catalogs ·
       automated output is an indicator, not legal advice.
       <p className="mx-auto mt-2 max-w-3xl px-4">
         Privacy: each analysis adds anonymous, text-free statistics (severity, category and cited control IDs) to the

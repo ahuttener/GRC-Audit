@@ -110,6 +110,7 @@ $catalogs = [
     'ccpa-cpra.json'              => 'sections',
     'hipaa-security-privacy.json' => 'controls',
     'aiuc-1.json'                 => 'requirements',
+    'dora.json'                   => 'articles',
 ];
 $context = '';
 foreach ($catalogs as $file => $key) {
@@ -149,6 +150,17 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   and explain why in its finding/risk field. Never invent an ID to fill a slot.
 - AIUC-1 (the AI agent standard) applies ONLY when an AI system, chatbot, LLM or AI agent is part of
   the incident. Otherwise set aiuc_1.requirements to "N/A" and say no AI system is involved.
+- DORA (EU Digital Operational Resilience Act, Regulation (EU) 2022/2554) applies ONLY to EU financial
+  entities listed in its Art. 2 (credit institutions/banks, payment and e-money institutions, investment
+  firms, insurers and reinsurers, crypto-asset service providers, fund managers, trading venues, etc.)
+  and to ICT third-party service providers serving them. Otherwise set dora.article to "N/A" and say
+  the organisation is not an EU financial entity. When it applies, cite the duties the incident shows:
+  ICT risk governance Art. 5 / Art. 6, protection and prevention Art. 9, detection Art. 10, response
+  and recovery Art. 11, backups and restoration Art. 12, incident management and classification
+  Art. 17 / Art. 18, reporting a major ICT-related incident to the competent authority (initial,
+  intermediate and final report) Art. 19, ICT third-party risk Art. 28 / Art. 30 (Art. 29 for
+  concentration risk), resilience testing Art. 24 / Art. 25 (Art. 26 for TLPT). DORA incident reporting
+  covers ICT disruptions even with no personal data involved, unlike GDPR Art. 33.
 - Cite EVERY directly relevant control in each framework, not just the most obvious one. For ISO/IEC
   27001:2022 this is usually 2-6 Annex A controls joined with " & " (e.g. "A.8.1 & A.6.5 & A.5.14"):
   check the People (A.6), Physical (A.7) and Technological (A.8) themes as well as Organizational
@@ -196,7 +208,8 @@ Field guidance: incident_title = concise headline; incident_summary = 1-2 senten
 briefing; iso_27001_2022.control_id like "A.8.1 & A.6.5"; iso_27001_2022.category = People / Organizational / Physical / Technological;
 soc_2.criteria like "CC6.2, CC6.3"; gdpr.article like "Art. 32 & Art. 33"; ccpa_cpra.section like
 "1798.150"; hipaa.rule like "164.308(a)(3)(ii)(C)"; nist_csf_2.subcategories like
-"PR.AA-01, PR.AA-05"; aiuc_1.requirements like "B006, D003"; audit_evidence_required = concrete artefacts an auditor would request;
+"PR.AA-01, PR.AA-05"; aiuc_1.requirements like "B006, D003"; dora.article like "Art. 17 & Art. 19";
+audit_evidence_required = concrete artefacts an auditor would request;
 remediation_plan = immediate containment, then data-leak forensics + statutory notification
 triggers only if a personal data breach occurred (e.g. GDPR 72h), then the permanent architectural/process fix.
 PROMPT;

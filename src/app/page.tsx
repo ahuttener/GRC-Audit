@@ -27,7 +27,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api/audit-incident";
 const TRACK_URL = process.env.NEXT_PUBLIC_TRACK_URL || "";
 // Served under a sub-path on static hosts (/grcaudit, /GRC-Audit); set in next.config.mjs.
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
-const TAGS = ["NIST CSF 2.0", "ISO 27001", "SOC 2", "GDPR", "CCPA/CPRA", "HIPAA", "AIUC-1"];
+const TAGS = ["NIST CSF 2.0", "ISO 27001", "SOC 2", "GDPR", "CCPA/CPRA", "HIPAA", "AIUC-1", "DORA"];
 
 export default function Page() {
   const [incident, setIncident] = useState("");
@@ -144,7 +144,7 @@ export default function Page() {
           </div>
           <p className="max-w-3xl text-sm leading-relaxed text-slate-300">
             Describe any security incident or audit finding in plain language. GRC Audit maps it to
-            NIST CSF 2.0, ISO/IEC 27001:2022, SOC 2, GDPR, CCPA/CPRA, HIPAA and the AIUC-1 AI agent standard — grounded against
+            NIST CSF 2.0, ISO/IEC 27001:2022, SOC 2, GDPR, CCPA/CPRA, HIPAA, the AIUC-1 AI agent standard and DORA for EU financial entities — grounded against
             embedded official catalogs so control IDs are verified, not hallucinated — then lists the
             audit evidence an assessor will request and builds a 3-step remediation plan.
           </p>

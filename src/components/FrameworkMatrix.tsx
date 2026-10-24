@@ -43,6 +43,12 @@ function build(gf: GroundedFrameworks): Card[] {
       name: gf.aiuc_1?.name ?? "AI agent standard",
       body: gf.aiuc_1?.audit_finding ?? "Not applicable — no AI system or agent is involved.",
     },
+    {
+      label: "DORA", jurisdiction: "EU – Financial", accent: "text-sky-300 border-sky-400/30",
+      id: gf.dora?.article ?? "N/A",
+      name: gf.dora?.name ?? "Digital operational resilience",
+      body: gf.dora?.regulatory_risk ?? "Not applicable — not an EU financial entity.",
+    },
   ];
 }
 

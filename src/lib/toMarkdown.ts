@@ -38,6 +38,8 @@ export function toMarkdown(resp: AuditResponse): string {
   L.push(`- **${gf.hipaa.rule}:** ${gf.hipaa.regulatory_risk}`);
   L.push(`### AIUC-1 (AI agents) — ${gf.aiuc_1?.name ?? "AI agent standard"}`);
   L.push(`- **${gf.aiuc_1?.requirements ?? "N/A"}:** ${gf.aiuc_1?.audit_finding ?? "Not applicable — no AI system or agent is involved."}`);
+  L.push(`### DORA (EU financial sector) — ${gf.dora?.name ?? "Digital operational resilience"}`);
+  L.push(`- **${gf.dora?.article ?? "N/A"}:** ${gf.dora?.regulatory_risk ?? "Not applicable — not an EU financial entity."}`);
   L.push("");
   L.push(`## Audit evidence required`);
   for (const e of r.audit_evidence_required) L.push(`- ${e}`);

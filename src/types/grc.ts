@@ -52,6 +52,12 @@ export interface AiucMapping {
   name: string;
   audit_finding: string;
 }
+/** DORA (EU financial sector) — only applies to EU financial entities and their ICT providers. */
+export interface DoraMapping {
+  article: string;
+  name: string;
+  regulatory_risk: string;
+}
 export interface NistMapping {
   subcategories: string;
   function_name: string;
@@ -66,6 +72,8 @@ export interface GroundedFrameworks {
   nist_csf_2: NistMapping;
   /** Optional so curated results without AI involvement can omit it (shown as N/A). */
   aiuc_1?: AiucMapping;
+  /** Optional so curated results outside the EU financial sector can omit it (shown as N/A). */
+  dora?: DoraMapping;
 }
 
 export interface RemediationPlan {

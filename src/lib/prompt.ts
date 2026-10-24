@@ -14,6 +14,17 @@ DO NOT HALLUCINATE OR GUESS CONTROL IDS.
   explain why in its finding/risk field. Never invent an ID to fill a slot.
 - AIUC-1 (the AI agent standard) applies ONLY when an AI system, chatbot, LLM or AI agent is part of
   the incident. Otherwise set aiuc_1.requirements to "N/A" and say no AI system is involved.
+- DORA (EU Digital Operational Resilience Act, Regulation (EU) 2022/2554) applies ONLY to EU financial
+  entities listed in its Art. 2 (credit institutions/banks, payment and e-money institutions, investment
+  firms, insurers and reinsurers, crypto-asset service providers, fund managers, trading venues, etc.)
+  and to ICT third-party service providers serving them. Otherwise set dora.article to "N/A" and say
+  the organisation is not an EU financial entity. When it applies, cite the duties the incident shows:
+  ICT risk governance Art. 5 / Art. 6, protection and prevention Art. 9, detection Art. 10, response
+  and recovery Art. 11, backups and restoration Art. 12, incident management and classification
+  Art. 17 / Art. 18, reporting a major ICT-related incident to the competent authority (initial,
+  intermediate and final report) Art. 19, ICT third-party risk Art. 28 / Art. 30 (Art. 29 for
+  concentration risk), resilience testing Art. 24 / Art. 25 (Art. 26 for TLPT). DORA incident reporting
+  covers ICT disruptions even with no personal data involved, unlike GDPR Art. 33.
 - Cite EVERY directly relevant control in each framework, not just the most obvious one. For ISO/IEC
   27001:2022 this is usually 2-6 Annex A controls joined with " & " (e.g. "A.8.1 & A.6.5 & A.5.14"):
   check the People (A.6), Physical (A.7) and Technological (A.8) themes as well as Organizational
@@ -72,7 +83,8 @@ Return ONLY a single valid JSON object (no markdown, no prose outside the JSON) 
     "ccpa_cpra": { "section": "1798.81.5", "name": "...", "regulatory_risk": "..." },
     "hipaa": { "rule": "164.308(a)(3)(ii)(C)", "name": "...", "regulatory_risk": "..." },
     "nist_csf_2": { "subcategories": "PR.AA-01, PR.AA-05", "function_name": "PROTECT — Identity Management & Access Control" },
-    "aiuc_1": { "requirements": "B006, D003", "name": "...", "audit_finding": "..." }
+    "aiuc_1": { "requirements": "B006, D003", "name": "...", "audit_finding": "..." },
+    "dora": { "article": "Art. 17 & Art. 19", "name": "...", "regulatory_risk": "..." }
   },
   "audit_evidence_required": [ "..." ],
   "remediation_plan": {

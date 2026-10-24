@@ -19,7 +19,7 @@ export default function IndicatorsLink() {
         <span className="mt-0.5 block font-semibold text-white">GRC KPI &amp; KRI Dashboard</span>
         <span className="mt-1 block text-sm leading-relaxed text-slate-400">
           Key risk indicators with risk-appetite thresholds, a severity heat map, control coverage across
-          all 7 frameworks and a JSON / CSV API ready for Power BI, Grafana or Excel.
+          all 8 frameworks and a JSON / CSV API ready for Power BI, Grafana or Excel.
         </span>
       </span>
       <ArrowUpRight

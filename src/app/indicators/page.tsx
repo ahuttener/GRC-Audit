@@ -6,7 +6,7 @@ import IndicatorsDashboard from "@/components/indicators/IndicatorsDashboard";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const DESCRIPTION =
-  "Live GRC KPIs and Key Risk Indicators from every GRC Audit analysis: risk-appetite thresholds, severity heat map, control coverage across NIST CSF 2.0, ISO 27001, SOC 2, GDPR, CCPA/CPRA, HIPAA and AIUC-1, plus an open JSON / CSV API.";
+  "Live GRC KPIs and Key Risk Indicators from every GRC Audit analysis: risk-appetite thresholds, severity heat map, control coverage across NIST CSF 2.0, ISO 27001, SOC 2, GDPR, CCPA/CPRA, HIPAA, AIUC-1 and DORA, plus an open JSON / CSV API.";
 
 export const metadata: Metadata = {
   title: "GRC Indicators | CyberSecInfo",

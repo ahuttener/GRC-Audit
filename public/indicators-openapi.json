@@ -86,7 +86,7 @@
       "Framework": {
         "type": "object",
         "properties": {
-          "key": { "type": "string", "enum": ["iso_27001_2022", "nist_csf_2", "soc_2", "gdpr", "ccpa_cpra", "hipaa", "aiuc_1"] },
+          "key": { "type": "string", "enum": ["iso_27001_2022", "nist_csf_2", "soc_2", "gdpr", "ccpa_cpra", "hipaa", "aiuc_1", "dora"] },
           "label": { "type": "string" },
           "catalog_size": { "type": "integer" },
           "applicable_analyses": { "type": "integer" },

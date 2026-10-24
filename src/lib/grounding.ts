@@ -9,6 +9,7 @@ import hipaa from "@/data/frameworks/hipaa-security-privacy.json";
 import soc from "@/data/frameworks/soc-2-tsc.json";
 import ccpa from "@/data/frameworks/ccpa-cpra.json";
 import aiuc from "@/data/frameworks/aiuc-1.json";
+import dora from "@/data/frameworks/dora.json";
 import type { AuditResult } from "@/types/grc";
 
 interface Entry {
@@ -52,6 +53,11 @@ const CATALOGS: { key: string; label: string; entries: Entry[] }[] = [
     key: "aiuc_1",
     label: "AIUC-1 (AI agents)",
     entries: (aiuc.requirements as any[]).map((c) => ({ id: c.id, name: c.name })),
+  },
+  {
+    key: "dora",
+    label: "DORA (EU financial sector)",
+    entries: (dora.articles as any[]).map((c) => ({ id: c.id, name: c.name })),
   },
 ];
 
@@ -166,6 +172,7 @@ export function verify(result: AuditResult): {
     { key: "hipaa", raw: gf.hipaa?.rule ?? "" },
     { key: "nist_csf_2", raw: gf.nist_csf_2?.subcategories ?? "" },
     { key: "aiuc_1", raw: gf.aiuc_1?.requirements ?? "" },
+    { key: "dora", raw: gf.dora?.article ?? "" },
   ];
 
   const cited: string[] = [];

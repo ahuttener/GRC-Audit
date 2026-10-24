@@ -367,7 +367,7 @@ export default function IndicatorsDashboard() {
             <Stat label="Analyses" value={num(k.analyses)} sub={`${num(k.ai_analyses)} AI · ${num(k.demo_analyses)} demo`} />
             <Stat label="High / Critical" value={pct(k.high_critical_rate)} sub="of analysed incidents" />
             <Stat label="Grounded" value={pct(k.grounded_rate)} sub="every cited ID verified" />
-            <Stat label="Controls / analysis" value={k.avg_controls_per_analysis?.toFixed(1) ?? "—"} sub="verified citations, 7 frameworks" />
+            <Stat label="Controls / analysis" value={k.avg_controls_per_analysis?.toFixed(1) ?? "—"} sub="verified citations, 8 frameworks" />
             <Stat label="Catalog coverage" value={pct(k.catalog_coverage)} sub="official controls exercised" />
             <Stat label="Breach notification" value={pct(k.breach_notification_rate)} sub="GDPR 33/34 · CCPA · HIPAA" />
             <Stat label="AI system involved" value={pct(k.ai_system_involvement_rate)} sub="AIUC-1 in scope" />

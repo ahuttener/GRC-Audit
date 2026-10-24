@@ -5,7 +5,7 @@ Where the data comes from. GRC Audit does not rely on model memory for control I
 the grounding layer verifies every cited ID against them (the green **"Grounded"** badge). The IDs and
 titles are verified against the official sources below.
 
-> **Free vs paid:** NIST, SOC 2 (AICPA), GDPR, HIPAA, CCPA and AIUC-1 publish their official text **for free**.
+> **Free vs paid:** NIST, SOC 2 (AICPA), GDPR, HIPAA, CCPA, AIUC-1 and DORA publish their official text **for free**.
 > **ISO/IEC 27001 is a paid standard** — there is no free legal download, so the app references only its
 > official control IDs and short titles (factual references), never the standard's text.
 
@@ -18,6 +18,7 @@ titles are verified against the official sources below.
 | HIPAA Security/Breach | 45 CFR Part 164 | eCFR (below) | ✅ |
 | CCPA / CPRA | Cal. Civ. Code 1798.100+ | California OAG / leginfo (below) | ✅ |
 | AIUC-1 — AI agent standard | Q4 2026 (updated 15 Oct 2026) | standard.aiuc-1.com (below) | ✅ |
+| DORA — Digital Operational Resilience Act | Reg. (EU) 2022/2554 (applies from 17 Jan 2025) | EUR-Lex (below) | ✅ |
 
 ## Direct links
 
@@ -48,6 +49,13 @@ titles are verified against the official sources below.
 - California Attorney General (CCPA): https://oag.ca.gov/privacy/ccpa
 - Statute text (leginfo, Civil Code 1798.100 et seq.): https://leginfo.legislature.ca.gov
 - CPRA regulations (CPPA, CCR Title 11): https://cppa.ca.gov/regulations/
+
+### DORA — Digital Operational Resilience Act (free)
+- Official text (EUR-Lex): https://eur-lex.europa.eu/eli/reg/2022/2554/oj
+- Official PDF: https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022R2554
+- The catalog holds all 64 articles with their official titles (OJ L 333, 27.12.2022). DORA applies only
+  to the EU financial entities listed in Art. 2 and to ICT third-party service providers serving them;
+  for any other organisation the tool marks it N/A.
 
 ### AIUC-1 — AI agent standard (free)
 - Standard home (Artificial Intelligence Underwriting Company): https://www.aiuc-1.com/

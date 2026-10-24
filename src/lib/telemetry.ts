@@ -43,6 +43,7 @@ export function buildTrackEvent(
         hipaa: { rule: gf.hipaa?.rule ?? "" },
         nist_csf_2: { subcategories: gf.nist_csf_2?.subcategories ?? "" },
         aiuc_1: { requirements: gf.aiuc_1?.requirements ?? "" },
+        dora: { article: gf.dora?.article ?? "" },
       },
     },
   };

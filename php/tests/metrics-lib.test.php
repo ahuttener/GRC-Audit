@@ -36,7 +36,7 @@ $entries = grc_catalogs($catalogDir)['gdpr']['entries'];
 check('resolve finer to catalog id', grc_resolve_id('Art. 5(1)(f)', $entries) === 'Art. 5');
 check('resolve range member to range id', grc_resolve_id('Art. 17', $entries) === 'Art. 15-22');
 check('hallucinated id is null', grc_resolve_id('Art. 999', $entries) === null);
-check('7 catalogs loaded', count(array_filter(grc_catalogs($catalogDir), fn($c) => count($c['entries']) > 0)) === 7);
+check('8 catalogs loaded', count(array_filter(grc_catalogs($catalogDir), fn($c) => count($c['entries']) > 0)) === 8);
 
 // ---- extraction keeps only structured, verified facts ----
 $result = [
@@ -59,6 +59,7 @@ check('cited counts every id', $x['cited'] === 8);
 check('one hallucinated id', $x['unverified'] === 1 && $x['verified'] === 7);
 check('breach notice from Art. 33', $x['breach_notice'] === 1);
 check('aiuc missing → not applicable', $x['applicable']['aiuc_1'] === 0 && $x['ai_involved'] === 0);
+check('dora missing → not applicable', $x['applicable']['dora'] === 0);
 check('ccpa N/A → not applicable', $x['applicable']['ccpa_cpra'] === 0);
 check('evidence items counted', $x['evidence_items'] === 3);
 check('unverified kept only as a placeholder', in_array(['iso_27001_2022', '(unverified)', 0], $x['citations'], true));
@@ -93,7 +94,7 @@ grc_metrics_count($cfg, 'llm_rate_limited_ip');
 $db = grc_metrics_db($cfg);
 check('one analysis row', (int) $db->query('SELECT COUNT(*) FROM analyses')->fetchColumn() === 1);
 check('citations aggregated per day', (int) $db->query('SELECT SUM(n) FROM citations_daily')->fetchColumn() === 8);
-check('applicability aggregated per day', (int) $db->query('SELECT SUM(n) FROM applicability_daily')->fetchColumn() === 7);
+check('applicability aggregated per day', (int) $db->query('SELECT SUM(n) FROM applicability_daily')->fetchColumn() === 8);
 grc_metrics_record($cfg, ['source' => 'demo', 'scenario' => 'custom'], $result, $catalogDir);
 check('second analysis adds to the same daily rows', (int) $db->query('SELECT COUNT(*) FROM citations_daily')->fetchColumn() === 8
     && (int) $db->query('SELECT SUM(n) FROM citations_daily')->fetchColumn() === 16);

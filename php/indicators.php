@@ -86,7 +86,7 @@ const KRI_DEFINITIONS = [
     'KRI-05' => ['Capacity pressure', 'AI attempts refused by the credit-protection rate limits', 'ratio', 'lower', 0.05, 0.15],
     'KRI-06' => ['High / Critical exposure', 'Share of analysed incidents rated High or Critical', 'ratio', 'lower', 0.40, 0.60],
     'KRI-07' => ['Breach-notification triggers', 'Share of incidents that trigger a statutory notification (GDPR 33/34, CCPA, HIPAA)', 'ratio', 'lower', 0.25, 0.40],
-    'KRI-08' => ['Control-catalog coverage', 'Distinct official controls exercised at least once across the 7 frameworks', 'ratio', 'higher', 0.30, 0.15],
+    'KRI-08' => ['Control-catalog coverage', 'Distinct official controls exercised at least once across the 8 frameworks', 'ratio', 'higher', 0.30, 0.15],
 ];
 
 function kri_scorecard(array $values): array

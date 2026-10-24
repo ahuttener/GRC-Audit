@@ -14,7 +14,7 @@ diagnosis — with control IDs verified against official catalogs, not hallucina
 ![Next.js](https://img.shields.io/badge/Next.js-14-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 ![Grounded](https://img.shields.io/badge/anti--hallucination-grounded-success)
-![Frameworks](https://img.shields.io/badge/NIST%20·%20ISO%2027001%20·%20SOC%202%20·%20GDPR%20·%20CCPA%20·%20HIPAA%20·%20AIUC--1-6f42c1)
+![Frameworks](https://img.shields.io/badge/NIST%20·%20ISO%2027001%20·%20SOC%202%20·%20GDPR%20·%20CCPA%20·%20HIPAA%20·%20AIUC--1%20·%20DORA-6f42c1)
 
 A production-style web app by [CyberSecInfo](https://cybersecinfo.com). It translates a
 real-world incident, misconfiguration or audit finding into:
@@ -24,6 +24,9 @@ real-world incident, misconfiguration or audit finding into:
    GDPR, CCPA/CPRA, HIPAA and **AIUC-1** (the AI agent standard), with the exact control/article IDs.
    AIUC-1 is cited only when an AI system or agent is part of the incident (prompt injection,
    unauthorized agent actions, hallucinations, shadow AI); otherwise it is marked N/A.
+   **DORA** (EU Digital Operational Resilience Act, Reg. (EU) 2022/2554) is cited only for EU
+   financial entities — banks, payment and e-money institutions, insurers, investment firms,
+   crypto-asset providers — and their ICT providers; otherwise it is marked N/A.
 3. **Audit evidence** an assessor will request (logs, tickets, policies).
 4. **A 3-step remediation roadmap** — immediate containment → leak investigation &
    legal/notification (e.g. GDPR 72h) → permanent systemic fix.
@@ -106,7 +109,7 @@ companion [Identity Governance Audit Framework](https://github.com/ahuttener/ide
 
 Returns `{ source, model?, verification, result }`, where `result` matches
 [`src/types/grc.ts`](src/types/grc.ts): `incident_title`, `incident_summary`, `severity_level`,
-`failure_category`, `grounded_frameworks` (the seven framework objects; `aiuc_1` is "N/A" when no AI is involved), `audit_evidence_required`,
+`failure_category`, `grounded_frameworks` (the eight framework objects; `aiuc_1` is "N/A" when no AI is involved, `dora` is "N/A" outside the EU financial sector), `audit_evidence_required`,
 and `remediation_plan` (three steps).
 
 ## Tests
@@ -129,7 +132,7 @@ src/
                                  FrameworkMatrix, EvidenceCard, RemediationRoadmap, …
   data/
     frameworks/*.json            embedded official catalogs (grounding source)
-    scenarios.ts                 the 23 quick-test scenarios
+    scenarios.ts                 the 26 quick-test scenarios
   lib/
     grounding.ts                 retrieve + verify against catalogs (+ grounding.test.ts)
     rateLimit.ts                 credit protection for the API route (+ rateLimit.test.ts)

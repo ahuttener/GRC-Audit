@@ -24,6 +24,7 @@ const GRC_FRAMEWORKS = [
     'ccpa_cpra'      => ['CCPA/CPRA', 'ccpa-cpra.json', 'sections'],
     'hipaa'          => ['HIPAA', 'hipaa-security-privacy.json', 'controls'],
     'aiuc_1'         => ['AIUC-1 (AI agents)', 'aiuc-1.json', 'requirements'],
+    'dora'           => ['DORA (EU financial sector)', 'dora.json', 'articles'],
 ];
 /** Result field that holds the cited IDs of each framework (grounded_frameworks.<key>.<field>). */
 const GRC_FIELDS = [
@@ -34,6 +35,7 @@ const GRC_FIELDS = [
     'ccpa_cpra'      => 'section',
     'hipaa'          => 'rule',
     'aiuc_1'         => 'requirements',
+    'dora'           => 'article',
 ];
 /** Cited IDs counted per framework and analysis (the prompt asks for 2-6 ISO controls). */
 const GRC_MAX_IDS = 8;

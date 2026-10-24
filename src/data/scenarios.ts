@@ -10,14 +10,16 @@ export interface Scenario {
     | "user-x" | "key-round" | "mail-warning" | "shield-off" | "database-backup" | "fish"
     | "handshake" | "laptop" | "cloud-off" | "timer-off" | "file-question" | "eye-off"
     | "bug" | "git-pull-request" | "syringe" | "trash" | "message-warning" | "brain"
-    | "crown" | "clipboard-x" | "bot" | "split" | "server-crash";
+    | "crown" | "clipboard-x" | "bot" | "split" | "server-crash" | "landmark" | "credit-card"
+    | "file-lock";
   archetype:
     | "zombie-account" | "secret-exposure" | "data-leak" | "missing-mfa" | "ransomware"
     | "phishing-bec" | "vendor-breach" | "lost-device-phi" | "public-bucket"
     | "late-notification" | "dsar-ignored" | "missing-logs" | "unpatched-vpn"
     | "unapproved-change" | "prompt-injection" | "agent-unauthorized-action" | "ai-hallucination"
     | "shadow-ai" | "privileged-access" | "access-review-failure" | "non-human-identity"
-    | "sod-conflict" | "backup-dr-failure";
+    | "sod-conflict" | "backup-dr-failure" | "dora-cloud-outage" | "dora-payments-outage"
+    | "dora-insurer-ransomware";
   description: string;
 }
 
@@ -230,5 +232,33 @@ export const SCENARIOS: Scenario[] = [
     archetype: "backup-dr-failure",
     description:
       "During a power failure at its data centre, a payroll provider found that its database backups had not completed for six weeks because the backup storage was full and no alert was configured. The disaster recovery plan had never been tested and had no RTO or RPO targets, so payroll ran three days late while engineers rebuilt the database from older copies.",
+  },
+  // DORA scenarios — EU financial entities under Regulation (EU) 2022/2554.
+  {
+    id: "dora-cloud-outage",
+    title: "Bank Down After a Single Cloud Provider Outage",
+    badge: "DORA · Third-Party",
+    icon: "landmark",
+    archetype: "dora-cloud-outage",
+    description:
+      "An Irish retail bank's online and mobile banking were unavailable for nine hours when its only cloud provider suffered a regional outage. The bank had no exit strategy or tested failover, the cloud contract had no audit or access rights and was missing from the register of information, and the initial notification of the major ICT-related incident reached the Central Bank of Ireland a day late.",
+  },
+  {
+    id: "dora-payments-outage",
+    title: "Failed Change Takes Card Payments Offline",
+    badge: "DORA · Resilience",
+    icon: "credit-card",
+    archetype: "dora-payments-outage",
+    description:
+      "A payment institution in the EU pushed an untested configuration change to its card authorisation platform on a Friday evening. Card payments failed for six hours for around 300,000 customers. The incident was not classified as major until Monday, so the regulator and customers were informed late, the ICT business continuity plan had never been exercised, and no post-incident review was carried out.",
+  },
+  {
+    id: "dora-insurer-ransomware",
+    title: "Ransomware Hits an EU Insurer's Claims Platform",
+    badge: "DORA · Incident",
+    icon: "file-lock",
+    archetype: "dora-insurer-ransomware",
+    description:
+      "Attackers exploited an unpatched internet-facing file transfer server at an EU insurance company, stole policyholder personal and medical claims data, and encrypted the claims platform for four days. The critical systems had never been penetration tested, backups were on the same network and were encrypted too, and nobody had decided who must notify the insurance supervisor.",
   },
 ];
