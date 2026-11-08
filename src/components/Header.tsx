@@ -1,7 +1,7 @@
 "use client";
 
 import type { MouseEvent } from "react";
-import { ArrowLeft, FileText, Github, ShieldCheck, type LucideIcon } from "lucide-react";
+import { ArrowLeft, FileText, Github, ShieldCheck, UserCheck, type LucideIcon } from "lucide-react";
 
 // Same top bar as cybersecinfo.com, so GRC Audit reads as part of the site — with a Back
 // button where the logo would be. Absolute URLs keep every link working on both
@@ -11,7 +11,7 @@ const NAV: { label: string; href: string; icon?: LucideIcon; active?: boolean }[
   { label: "GitHub", href: "https://github.com/ahuttener", icon: Github },
   { label: "GRC Audit", href: `${HOME}grcaudit/`, icon: ShieldCheck, active: true },
   { label: "Editor PDF", href: `${HOME}editor-pdf/`, icon: FileText },
-  { label: "Topics", href: `${HOME}#threats` },
+  { label: "KYC/IAM", href: `${HOME}kyc/`, icon: UserCheck },
   { label: "Protection", href: `${HOME}#protection` },
   { label: "AI Analyzer", href: `${HOME}#analyzer` },
   { label: "AI Chat", href: `${HOME}#chatbot` },
