@@ -11,7 +11,7 @@ const NAV: { label: string; href: string; icon?: LucideIcon; active?: boolean }[
   { label: "GitHub", href: "https://github.com/ahuttener", icon: Github },
   { label: "GRC Audit", href: `${HOME}grcaudit/`, icon: ShieldCheck, active: true },
   { label: "Editor PDF", href: `${HOME}editor-pdf/`, icon: FileText },
-  { label: "KYC/IAM", href: `${HOME}kyc/`, icon: UserCheck },
+  { label: "KYC/AML", href: `${HOME}kyc/`, icon: UserCheck },
   { label: "Protection", href: `${HOME}#protection` },
   { label: "AI Analyzer", href: `${HOME}#analyzer` },
   { label: "AI Chat", href: `${HOME}#chatbot` },
